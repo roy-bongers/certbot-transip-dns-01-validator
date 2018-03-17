@@ -1,0 +1,4 @@
+#!/usr/bin/php
+<?php
+$_SERVER['ACME_HOOK'] = 'cleanup';
+require_once('hooks.php');
