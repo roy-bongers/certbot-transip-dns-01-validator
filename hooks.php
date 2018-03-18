@@ -27,7 +27,8 @@ catch (SoapFault $e) {
 }
 
 // get different domain names.
-if (1 !== preg_match('/^((.*)\.)?(' . implode('|', $domains) . ')$/', $domain, $matches)) {
+$regex_domains = $domains;
+if (1 !== preg_match('/^((.*)\.)?(' . implode('|', array_map('preg_quote', $domains)) . ')$/', $domain, $matches)) {
 	echo 'Can\'t manage DNS for given domain (' . $domain . ').' . PHP_EOL;
 	exit(1);
 }
