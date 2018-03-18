@@ -29,6 +29,23 @@ If you need to do some testing use the staging environment from Let's Encrypt:
 --server https://acme-staging-v02.api.letsencrypt.org/directory
 ```
 
+Installing certbot v0.22.0
+------------
+A Debian PPA with this version is currently not yet available so I installed it from source: 
+```
+git clone https://github.com/certbot/certbot
+cd certbot
+git checkout v0.22.0
+sudo ./certbot-auto --os-packages-only
+./tools/venv.sh
+source ./venv/bin/activate
+certbot --version
+```
+You'll enter some kind of virtual environment. Now you can request your certificate. To leave this just type:
+```
+deactivate
+```
+
 [1]: https://letsencrypt.org/
 [2]: https://certbot.eff.org/
 [3]: https://www.transip.nl/transip/api/
