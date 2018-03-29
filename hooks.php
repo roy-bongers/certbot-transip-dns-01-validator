@@ -58,6 +58,7 @@ elseif ('cleanup' === $_SERVER['ACME_HOOK']) {
 	$dnsEntries = array_filter($dnsEntries, function($dnsEntry) {
 		return false === strpos($dnsEntry->name,'_acme-challenge');
 	});
+	$dnsEntries = array_values($dnsEntries);
 }
 
 // save new DNS records
