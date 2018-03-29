@@ -1,8 +1,8 @@
 # certbot-transip-dns-01-validator
 Certbot DNS-01 validation for wildcard certificates (ACME-v2)
 
-I created this script to request wildcard SSL certificates from [Let's Encrypt][1]. You are requred to do a DNS-01 
-challenge for which you need to create a DNS (TXT) record.  [TransIP API][3] has an API which allows you to automate this. 
+I created this script to request wildcard SSL certificates from [Let's Encrypt][1]. You are required to do a DNS-01 
+challenge for which you need to create a DNS (TXT) record. [TransIP API][3] has an API which allows you to automate this. 
 When you need to renew your certificate you also need to perform the DNS-01 challenge again. This should happen automatically.
 
 Installation
