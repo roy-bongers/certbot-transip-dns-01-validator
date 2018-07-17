@@ -15,7 +15,7 @@ Installation
 
 * Download the [TransIP API][3] and extract the "Transip" folder in this project's directory
 * Aquire an API key for TransIP in [your account][4] on their website
-* Edit the Transip/ApiSettings.php and set your login and private key
+* Edit the Transip/ApiSettings.php and set your login and private key. Make sure you set the access to this file to only allow your user to read the contents of this file (on linux `chmod og-rwx Transip/ApiSettings.php`)
 
 Request a wildcard certificate
 ------------
