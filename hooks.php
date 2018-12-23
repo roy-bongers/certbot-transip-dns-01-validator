@@ -2,48 +2,68 @@
 // Disable output buffering.
 ob_implicit_flush(1);
 
-echo 'Starting script' . PHP_EOL;
+// Write to log file.
+define('LOG_FILE', 'log.txt');
+
+/**
+ * Append given string to log file.
+ *
+ * @param string $str The message to display and write to the log file.
+ */
+function log_msg($str)
+{
+    echo $str . PHP_EOL;
+    flush();
+    if (defined('LOG_FILE') && is_writable(LOG_FILE)) {
+        file_put_contents(LOG_FILE, date('Y-m-d H:i:s') . ' ' . $str . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+}
 
 // Check prerequisites.
 if ('cli' !== PHP_SAPI) {
-    echo 'Can only be called from CLI' . PHP_EOL;
+    log_msg('Can only be called from CLI');
     exit(1);
 }
 
 if (!isset($_SERVER['CERTBOT_DOMAIN'], $_SERVER['CERTBOT_VALIDATION'], $_SERVER['ACME_HOOK'])) {
-    echo 'Missing required environment variables: CERTBOT_DOMAIN, CERTBOT_VALIDATION, ACME_HOOK.' . PHP_EOL;
+    log_msg('Missing required environment variables: CERTBOT_DOMAIN, CERTBOT_VALIDATION, ACME_HOOK.');
     exit(1);
 }
-
-require_once('dns.php');
-require_once('Transip/DomainService.php');
 
 // Get environment variables.
 $sleep = 30;
 $domain = $_SERVER['CERTBOT_DOMAIN'];
 $challenge = $_SERVER['CERTBOT_VALIDATION'];
 
+log_msg(sprintf('Applying the %s hook for %s with value %s', $_SERVER['ACME_HOOK'], $domain, $challenge));
+
+// Make sure TransIP API library is installed.
+if (!file_exists('Transip' . DIRECTORY_SEPARATOR . 'DomainService.php')) {
+    log_msg('TransIP API library missing, download from https://www.transip.nl/transip/api/ .');
+    exit(1);
+}
+require_once('dns.php');
+require_once('Transip/DomainService.php');
+
 // Fetch all domain names that we can manage.
-echo 'Fetching domain names' . PHP_EOL;
 try {
     $domains = Transip_DomainService::getDomainNames();
 } catch (SoapFault $e) {
-    echo $e->getMessage() . PHP_EOL;
+    log_msg($e->getMessage());
     exit(1);
 }
 
 // Get different domain names.
 $regex_domains = $domains;
 if (1 !== preg_match('/^((.*)\.)?(' . implode('|', array_map('preg_quote', $domains)) . ')$/', $domain, $matches)) {
-    echo 'Can\'t manage DNS for given domain (' . $domain . ').' . PHP_EOL;
+    log_msg(sprintf('Can\'t manage DNS for given domain (%s).', $domain));
     exit(1);
 }
 $base_domain = $matches[3];
 $subdomain = $matches[2];
 $challenge_key = '_acme-challenge' . ($subdomain ? '.' . $subdomain : '');
 
-// Fetch alle DNS entries.
-echo 'Getting domain info' . PHP_EOL;
+// Fetch all DNS entries.
 try {
     $info = Transip_DomainService::getInfo($base_domain);
     $dnsEntries = $info->dnsEntries;
@@ -51,30 +71,34 @@ try {
         $dnsEntries = array($dnsEntries);
     }
 } catch (SoapFault $e) {
-    echo $e->getMessage() . PHP_EOL;
+    log_msg($e->getMessage());
     exit(1);
 }
+log_msg('Fetched DNS info from TransIP API');
 
-echo 'Altering DNS entries' . PHP_EOL;
 if ('challenge' === $_SERVER['ACME_HOOK']) {
     // Add challenge DNS entry.
     $dnsEntries[] = new Transip_DnsEntry($challenge_key, 60, Transip_DnsEntry::TYPE_TXT, $challenge);
+    log_msg(sprintf('Adding challenge DNS record (%s 60 TXT %s)', $challenge_key, $challenge));
 } elseif ('cleanup' === $_SERVER['ACME_HOOK']) {
-    // Remove challange DSN entries.
-    $dnsEntries = array_filter($dnsEntries, function ($dnsEntry) {
-        return false === strpos($dnsEntry->name, '_acme-challenge');
-    });
+    // Remove challenge DSN entries.
+    foreach ($dnsEntries as $index => $dnsEntry) {
+        if (false !== strpos($dnsEntry->name, '_acme-challenge') && $dnsEntry->content === $challenge) {
+            log_msg(sprintf('Removing challenge DNS record(%s 60 TXT %s)', $dnsEntry->name, $dnsEntry->content));
+            unset($dnsEntries[$index]);
+        }
+    }
     $dnsEntries = array_values($dnsEntries);
 }
 
 // Save new DNS records
-echo 'Saving DNS records' . PHP_EOL;
 try {
     Transip_DomainService::setDnsEntries($base_domain, $dnsEntries);
 } catch (SoapFault $e) {
-    echo $e->getMessage() . PHP_EOL;
+    log_msg($e->getMessage());
     exit(1);
 }
+log_msg('Saved changed DNS entries');
 
 // Sleep when creating a challenge so DNS records can be updated.
 if ('challenge' === $_SERVER['ACME_HOOK']) {
@@ -86,19 +110,17 @@ if ('challenge' === $_SERVER['ACME_HOOK']) {
 
     $updated_records = 0;
     $total_nameservers = count($nameservers);
-    echo 'Total nameservers ' . $total_nameservers . PHP_EOL;
+    log_msg('Total nameservers ' . $total_nameservers);
 
     // Loop until all nameservers have up-to-date records.
     while ($updated_records < $total_nameservers) {
-        echo 'While loop' . PHP_EOL;
         // Query each nameserver and make sure the TXT record exists.
         foreach ($nameservers as $ns_index => $nameserver) {
             $dns_query = new DNSQuery($nameserver);
             $dns_result = $dns_query->Query($challenge_key . '.' . $base_domain, 'TXT');
 
             if ((false === $dns_result) || (false !== $dns_query->error)) {
-                var_dump($dns_result);
-                echo $dns_query->lasterror . PHP_EOL;
+                log_msg($dns_query->lasterror);
                 exit(1);
             }
 
@@ -107,29 +129,25 @@ if ('challenge' === $_SERVER['ACME_HOOK']) {
                 if ($result->data === $challenge) {
                     // Update the amount of updated records.
                     $updated_records++;
-                    // No need to check updated nameservers again.
-                    echo 'Unsetting' . $ns_index . PHP_EOL;
-                    echo 'Currently updated records ' . $updated_records . PHP_EOL;
+                    // No need to check the already updated nameservers again.
                     unset($nameservers[$ns_index]);
                 }
-                echo 'Looping results' . PHP_EOL;
             }
         }
-        echo 'looped all nameservers' . PHP_EOL;
 
         if ($updated_records < $total_nameservers) {
             // Sleep if not all nameserver have updated yet.
-            $time = date('Y-m-d H:i:s');
-            echo $time . ' - ' . $updated_records . ' of ' . $total_nameservers . ' nameservers are ready. ';
-            echo sprintf('Retrying in %d seconds', $sleep) . PHP_EOL;
-            flush();
+            log_msg(sprintf(
+                '%d of %d nameservers are ready. Retrying in %d seconds',
+                $updated_records,
+                $total_nameservers,
+                $sleep
+            ));
             sleep($sleep);
-            $updated_records = 0;
         } else {
-            echo 'All records updated.' . PHP_EOL;
+            log_msg('All DNS records updated');
         }
     }
-    echo 'Exiting while loop...' . PHP_EOL;
 }
-echo 'Exiting script..' . PHP_EOL;
+log_msg(sprintf('exiting %s hook', $_SERVER['ACME_HOOK']));
 exit(0);
