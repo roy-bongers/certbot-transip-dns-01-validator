@@ -2,8 +2,12 @@
 // Disable output buffering.
 ob_implicit_flush(1);
 
-// Write to log file.
-define('LOG_FILE', 'log.txt');
+// Define log file to write to.
+if (is_writable('/var/log/')) {
+    define('LOG_FILE', '/var/log/certbot-transip-dns-01.log');
+} else {
+    define('LOG_FILE', __DIR__ . '/log.txt');
+}
 
 /**
  * Append given string to log file.
@@ -14,10 +18,17 @@ function log_msg($str)
 {
     echo $str . PHP_EOL;
     flush();
-    if (defined('LOG_FILE') && is_writable(LOG_FILE)) {
+
+    // Write to log file.
+    if (defined('LOG_FILE')) {
+        if (!file_exists(LOG_FILE)) {
+            touch(LOG_FILE);
+        }
         file_put_contents(LOG_FILE, date('Y-m-d H:i:s') . ' ' . $str . PHP_EOL, FILE_APPEND | LOCK_EX);
     }
 }
+
+log_msg(__DIR__ . '/log.txt');
 
 // Check prerequisites.
 if ('cli' !== PHP_SAPI) {
@@ -38,7 +49,7 @@ $challenge = $_SERVER['CERTBOT_VALIDATION'];
 log_msg(sprintf('Applying the %s hook for %s with value %s', $_SERVER['ACME_HOOK'], $domain, $challenge));
 
 // Make sure TransIP API library is installed.
-if (!file_exists('Transip' . DIRECTORY_SEPARATOR . 'DomainService.php')) {
+if (!file_exists(__DIR__ . '/Transip/DomainService.php')) {
     log_msg('TransIP API library missing, download from https://www.transip.nl/transip/api/ .');
     exit(1);
 }
@@ -91,7 +102,7 @@ if ('challenge' === $_SERVER['ACME_HOOK']) {
     $dnsEntries = array_values($dnsEntries);
 }
 
-// Save new DNS records
+// Save new DNS records.
 try {
     Transip_DomainService::setDnsEntries($base_domain, $dnsEntries);
 } catch (SoapFault $e) {
