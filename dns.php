@@ -63,7 +63,7 @@ class DNSTypes
 		$this->types_by_name[$name]=$id;
 	}
 	
-	function DNSTypes()
+	function __construct()
 	{
 		$this->types_by_id=array();
 		$this->types_by_name=array();
@@ -271,7 +271,7 @@ class DNSQuery
 		$this->lasterror="";
 	}
 	
-	function DNSQuery($server,$port=53,$timeout=60,$udp=true,$debug=false,$binarydebug=false)
+	function __construct($server,$port=53,$timeout=60,$udp=true,$debug=false,$binarydebug=false)
 	{
 		$this->server=$server;
 		$this->port=$port;
