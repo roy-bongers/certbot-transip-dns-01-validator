@@ -1,0 +1,6 @@
+<?php
+
+return [
+    'login'       => '',
+    'private_key' => '',
+];

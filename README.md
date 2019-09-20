@@ -5,23 +5,20 @@ I created this script to request wildcard SSL certificates from [Let's Encrypt][
 challenge for which you need to create a DNS (TXT) record. [TransIP][3] has an API which allows you to automate this.
 When you need to renew your certificate you also need to perform the DNS-01 challenge again. This should happen automatically.
 
-Requirements
-------------
+## Requirements
 * PHP with XML and SOAP extensions enabled
 * At least [Certbot][2] v0.22 for ACME-v2 support
 
-Installation
-------------
+## Installation
+* Run `composer install --no-dev`
+* Copy `config/transip.example.php` to `config/transip.php`
+* Acquire an API key for TransIP in [your account][4] on their website
+* Edit `config/transip.php` and set your login and private key. Make sure you set the access to this file to only allow your user to read the contents of this file (on linux `chmod og-rwx config/transip.php`)
 
-* Download the [TransIP API][3] and extract the "Transip" folder in this project's directory
-* Aquire an API key for TransIP in [your account][4] on their website
-* Edit the Transip/ApiSettings.php and set your login and private key. Make sure you set the access to this file to only allow your user to read the contents of this file (on linux `chmod og-rwx Transip/ApiSettings.php`)
-
-Request a wildcard certificate
-------------
+## Request a wildcard certificate
 
 Use this command to request the certificate. Replace "/path/to/" with the actual path on your computer.
-```
+```shell
 certbot --server https://acme-v02.api.letsencrypt.org/directory \
 certonly --manual --preferred-challenges=dns \
 --manual-auth-hook /path/to/auth-hook \
@@ -34,8 +31,7 @@ If you need to do some testing use the staging environment from Let's Encrypt:
 --server https://acme-staging-v02.api.letsencrypt.org/directory
 ```
 
-Contributors
-------------
+## Contributors
 
 When creating an issue please include a detailed description of what you are trying to execute and any output you receive. Feel free to fork the project and create a pull request. Make sure your code complies with the [PSR-1][5] and [PSR-2][6] coding standards.
 

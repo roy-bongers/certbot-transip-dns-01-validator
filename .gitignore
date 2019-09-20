@@ -1,2 +1,3 @@
-Transip/
+vendor/
 log.txt
+config/transip.php

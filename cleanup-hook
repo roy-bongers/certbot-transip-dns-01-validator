@@ -1,4 +1,7 @@
 #!/usr/bin/php
 <?php
-$_SERVER['ACME_HOOK'] = 'cleanup';
-require_once('hooks.php');
+require_once('./vendor/autoload.php');
+
+use \RoyBongers\CertbotTransIpDns01\HookLoader;
+
+new HookLoader(HookLoader::CLEANUP_HOOK);
