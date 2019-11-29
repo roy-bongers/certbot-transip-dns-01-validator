@@ -3,4 +3,7 @@
 return [
     'login'       => '',
     'private_key' => '',
+
+    'logfile'     => 'logs/certbot-transip.log',
+    'loglevel'    => 'info',
 ];

@@ -16,5 +16,8 @@
         "psr-4": {
             "RoyBongers\\Tests\\": "tests/"
         }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.5.2"
     }
 }

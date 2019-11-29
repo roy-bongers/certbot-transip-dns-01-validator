@@ -2,6 +2,8 @@
 
 namespace RoyBongers\CertbotTransIpDns01\Providers;
 
+use RuntimeException;
+use Psr\Log\LoggerInterface;
 use Transip_DnsEntry;
 use Transip_DomainService;
 use Transip_DnsService;
@@ -9,11 +11,19 @@ use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
 
 class TransIp implements ProviderInterface
 {
+    /** @var LoggerInterface $logger */
+    protected $logger;
+
     /** @var array $dnsEntries */
     protected $dnsEntries = [];
 
     /** @var array $domainNames */
     protected $domainNames = [];
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     public function createChallengeDnsRecord(string $challengeDnsRecord, string $challenge): void
     {
@@ -21,7 +31,8 @@ class TransIp implements ProviderInterface
         $dnsEntries = $this->getDnsEntries($domain['domain']);
 
         $challengeDnsRecord = $domain['subdomain'];
-        $challengeDnsEntry = new Transip_DnsEntry($challengeDnsRecord, 60, Transip_DnsEntry::TYPE_TXT, $challenge);
+        $this->logger->info('Challenge record: '. $challengeDnsRecord);
+        $challengeDnsEntry = new Transip_DnsEntry($challengeDnsRecord, 1, Transip_DnsEntry::TYPE_TXT, $challenge);
         array_push($dnsEntries, $challengeDnsEntry);
 
         Transip_DnsService::setDnsEntries($domain['domain'], $dnsEntries);
@@ -34,7 +45,9 @@ class TransIp implements ProviderInterface
 
         foreach ($dnsEntries as $index => $dnsEntry) {
             if ($dnsEntry->name === $domain['subdomain'] && $dnsEntry->content === $challenge) {
-                log_msg(sprintf('Removing challenge DNS record(%s 60 TXT %s)', $dnsEntry->name, $dnsEntry->content));
+                $this->logger->info(
+                    sprintf('Removing challenge DNS record(%s 60 TXT %s)', $dnsEntry->name, $dnsEntry->content)
+                );
                 unset($dnsEntries[$index]);
             }
         }
@@ -62,13 +75,12 @@ class TransIp implements ProviderInterface
         $domains = $this->getDomainNames();
         $domains = implode('|', array_map('preg_quote', $domains));
 
-        if (1 !== preg_match('/^((.*)\.)?('.$domains.')$/', $fullyQualifiedDomainName, $matches)) {
-            log_msg(sprintf('Can\'t manage DNS for given domain (%s).', $fullyQualifiedDomainName));
-            exit(1);
+        if (1 !== preg_match('/^((.*)\.)?(' . $domains . ')$/', $fullyQualifiedDomainName, $matches)) {
+            throw new RuntimeException(sprintf('Can\'t manage DNS for given domain (%s).', $fullyQualifiedDomainName));
         }
 
         return [
-            'domain'    => $matches[3],
+            'domain' => $matches[3],
             'subdomain' => $matches[2],
         ];
     }

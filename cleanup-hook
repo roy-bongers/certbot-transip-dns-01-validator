@@ -1,7 +1,9 @@
 #!/usr/bin/php
 <?php
+declare(strict_types = 1);
+
 require_once('./vendor/autoload.php');
 
 use \RoyBongers\CertbotTransIpDns01\HookLoader;
 
-new HookLoader(HookLoader::CLEANUP_HOOK);
+(new HookLoader())->runHook(HookLoader::CLEANUP_HOOK);

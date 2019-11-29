@@ -27,7 +27,8 @@ class CertbotDns01
         $this->request = new CertbotRequest();
     }
 
-    public function authHook() {
+    public function authHook(): void
+    {
         $challengeRecord = $this->getChallengeDnsRecordName();
         $challenge = $this->request->getChallenge();
 
@@ -38,7 +39,8 @@ class CertbotDns01
         $this->waitForNameServers();
     }
 
-    public function cleanupHook() {
+    public function cleanupHook(): void
+    {
         $challengeRecord = $this->getChallengeDnsRecordName();
         $challenge = $this->request->getChallenge();
 
@@ -62,7 +64,11 @@ class CertbotDns01
         $updatedRecords = 0;
         $totalNameservers = count($nameservers);
 
-        $this->logger->info(sprintf('Total nameservers %d', $totalNameservers));
+        $this->logger->info(sprintf(
+            'Total nameservers %d, (%s)',
+            $totalNameservers,
+            implode(', ', $nameservers)
+        ));
 
         while ($updatedRecords < $totalNameservers) {
             // Query each nameserver and make sure the TXT record exists.
