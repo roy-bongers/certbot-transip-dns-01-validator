@@ -19,36 +19,43 @@ Upgrading? See the [upgrade guide](#upgrade-guide).
 * Edit `config/transip.php` and set your login and private key.
 * Make sure you set the access to this file to only allow your user to read the contents of this file (on linux `chmod og-rwx config/transip.php`)
 
-## Request a wildcard certificate
+### Request a new wildcard certificate
 
 Use this command to request the certificate. Replace "/path/to/" with the actual path on your system.
+It takes a couple of minutes for the nameservers to be updated. Please be patient until the validation completes.
 ```shell
 certbot certonly --manual --preferred-challenges=dns \
---manual-auth-hook /path/to/auth-hook \
---manual-cleanup-hook /path/to/cleanup-hook \
+--manual-auth-hook /path/to/auth-hook --manual-cleanup-hook /path/to/cleanup-hook \
 -d 'domain.com' -d '*.domain.com'
 ```
 
-If you need to do some testing add the staging flag from Let's Encrypt:
+If you need to do some testing add the staging flag to the certbot command:
 ```
 --test-cert
 ```
 
-## Upgrade guide
-Version 2.0 is a complete rewrite of the code base and breaks with the original version.
- * Checkout the latest master branch
- * Follow the installation guide for 2.x
- * Remove the `Transip` folder. It is not used any more
- * You are ready to go!
+### Renew an existing certificate
+To automatically renew your certificate add the Certbot renew command in a cron job so it runs at least monthly.
+```shell
+/usr/bin/certbot renew
+````
+
+### Upgrade guide
+Version 2.0 is a complete rewrite of the code base and breaks with the original version. Follow these steps to upgrade:
+ 1. Checkout the latest master branch
+ 1. Follow the [installation guide](#installation)
+ 1. Remove the `Transip` folder after copying your login and private key to `config/transip.php`
+ 1. You are ready to go!
 
 ## Contributors
 
-When creating an issue please include a detailed description of what you are trying to execute and any output you receive. Feel free to fork the project and create a pull request. Make sure your code complies with the [PSR-1][5] and [PSR-2][6] coding standards.
+When creating an issue please include a detailed description of what you are trying to execute and any output you
+receive. Feel free to fork the project and create a pull request. Make sure your code complies with the [PSR-12][5]
+coding standards.
 
 [1]: https://letsencrypt.org/
 [2]: https://certbot.eff.org/
 [3]: https://www.transip.nl/transip/api/
 [4]: https://www.transip.nl/cp/account/api/
-[5]: https://www.php-fig.org/psr/psr-1/
-[6]: https://www.php-fig.org/psr/psr-2/
+[5]: https://www.php-fig.org/psr/psr-12/
 [7]: https://getcomposer.org/download/

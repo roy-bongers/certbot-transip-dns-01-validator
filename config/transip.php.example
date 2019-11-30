@@ -2,8 +2,10 @@
 
 return [
     'login'       => '',
-    'private_key' => '',
+    'private_key' => '
+-----BEGIN PRIVATE KEY-----
+-----END PRIVATE KEY-----',
 
     'logfile'     => 'logs/certbot-transip.log',
-    'loglevel'    => 'info',
+    'loglevel'    => 'info', // options: debug, info, error
 ];

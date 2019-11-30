@@ -2,11 +2,12 @@
 
 namespace RoyBongers\CertbotTransIpDns01;
 
-use Psr\Log\LoggerInterface;
+use Exception;
+use Monolog\Logger;
 use Psr\Log\LogLevel;
 use \RuntimeException;
-use Monolog\Logger;
 use \Transip_ApiSettings;
+use Psr\Log\LoggerInterface;
 use Monolog\Handler\StreamHandler;
 use RoyBongers\CertbotTransIpDns01\Providers\TransIp;
 use RoyBongers\CertbotTransIpDns01\Certbot\CertbotDns01;
@@ -18,9 +19,6 @@ class HookLoader
     public const CLEANUP_HOOK = 'cleanup';
 
     public const LOG_FILE = 'certbot-transip.log';
-
-    /** @var array $config */
-    protected $config;
 
     /** @var LoggerInterface $logger */
     protected $logger;
@@ -35,24 +33,30 @@ class HookLoader
 
     public function runHook(string $hook): void
     {
-        if ($hook === self::AUTH_HOOK) {
-            $this->acme2->authHook();
-        } elseif ($hook === self::CLEANUP_HOOK) {
-            $this->acme2->cleanupHook();
+        try {
+            if ($hook === self::AUTH_HOOK) {
+                $this->acme2->authHook();
+            } elseif ($hook === self::CLEANUP_HOOK) {
+                $this->acme2->cleanupHook();
+            }
+        }
+        catch (Exception $exception) {
+            $this->logger->error($exception->getMessage());
+            exit(1);
         }
     }
 
     private function setUp(): void
     {
-        $this->config = $this->loadConfig();
+        $config = $this->loadConfig();
 
         // set up logging
-        $loglevel     = $this->config['loglevel'] ?? LogLevel::INFO;
+        $loglevel     = $config['loglevel'] ?? LogLevel::INFO;
         $this->logger = $this->getLogger($loglevel);
 
         // setup TranIP API credentials.
-        Transip_ApiSettings::$login = trim($this->config['login'] ?? '');
-        Transip_ApiSettings::$privateKey = trim($this->config['private_key'] ?? '');
+        Transip_ApiSettings::$login = trim($config['login'] ?? '');
+        Transip_ApiSettings::$privateKey = trim($config['private_key'] ?? '');
 
         // initialize Certbot DNS01 challenge class.
         $provider    = new TransIp($this->logger);
