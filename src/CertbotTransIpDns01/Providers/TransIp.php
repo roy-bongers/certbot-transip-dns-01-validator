@@ -51,8 +51,8 @@ class TransIp implements ProviderInterface
                 unset($dnsEntries[$index]);
             }
         }
-
         $this->dnsEntries = array_values($dnsEntries);
+
         Transip_DnsService::setDnsEntries($domain['domain'], $dnsEntries);
     }
 
@@ -80,7 +80,7 @@ class TransIp implements ProviderInterface
         }
 
         return [
-            'domain' => $matches[3],
+            'domain'    => $matches[3],
             'subdomain' => $matches[2],
         ];
     }
