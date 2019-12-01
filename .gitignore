@@ -1,6 +1,6 @@
 config/transip.php
 vendor/
-logs/
+logs/*
 !logs/.gitkeep
 
 # PHPStorm
