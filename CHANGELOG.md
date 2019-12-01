@@ -5,15 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.0] - 
+### Added
+- Config file
+- Unit tests
+
 ### Changed
 - Complete rewrite of the code base
 - Now using composer for installation
-- No more need to manually download the TransIp API library
 
 ### Removed
 - Outdated PurplePixie PhpDns library
+- Requirement to manually download the TransIp API library
 
-## [1.0.1] - 2019-09-12
+## [1.1.0] - 2019-09-12
 ### Changed
 - Replaced deprecated constructors
 
