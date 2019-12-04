@@ -1,4 +1,11 @@
 #!/usr/bin/php
 <?php
-$_SERVER['ACME_HOOK'] = 'challenge';
-require_once('hooks.php');
+declare(strict_types = 1);
+
+define('APP_ROOT', __DIR__);
+require_once(APP_ROOT.'/vendor/autoload.php');
+
+use RoyBongers\CertbotTransIpDns01\Bootstrap;
+use RoyBongers\CertbotTransIpDns01\Certbot\Requests\AuthHookRequest;
+
+(new Bootstrap(new AuthHookRequest()));
