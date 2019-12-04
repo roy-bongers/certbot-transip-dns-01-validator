@@ -18,9 +18,6 @@ class TransIp implements ProviderInterface, LoggerAwareInterface
     /** @var LoggerInterface $logger */
     protected $logger;
 
-    /** @var array $dnsEntries */
-    protected $dnsEntries = [];
-
     /** @var array $domainNames */
     protected $domainNames = [];
 
@@ -33,7 +30,7 @@ class TransIp implements ProviderInterface, LoggerAwareInterface
     {
         $dnsEntries = $this->getDnsEntries($domain);
 
-        $challengeDnsEntry = new Transip_DnsEntry($challengeName, 1, Transip_DnsEntry::TYPE_TXT, $challengeValue);
+        $challengeDnsEntry = new Transip_DnsEntry($challengeName, 60, Transip_DnsEntry::TYPE_TXT, $challengeValue);
         array_push($dnsEntries, $challengeDnsEntry);
 
         Transip_DnsService::setDnsEntries($domain, $dnsEntries);
@@ -51,7 +48,7 @@ class TransIp implements ProviderInterface, LoggerAwareInterface
                 unset($dnsEntries[$index]);
             }
         }
-        $this->dnsEntries = array_values($dnsEntries);
+        $dnsEntries = array_values($dnsEntries);
 
         Transip_DnsService::setDnsEntries($domain, $dnsEntries);
     }
