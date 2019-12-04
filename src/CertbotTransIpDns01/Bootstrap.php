@@ -11,6 +11,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
 use Monolog\Handler\StreamHandler;
+use Monolog\Formatter\LineFormatter;
 use RoyBongers\CertbotTransIpDns01\Providers\TransIp;
 use RoyBongers\CertbotTransIpDns01\Certbot\CertbotDns01;
 use RoyBongers\CertbotTransIpDns01\Certbot\Requests\AuthHookRequest;
@@ -82,11 +83,14 @@ class Bootstrap implements LoggerAwareInterface
             $logFile = APP_ROOT . DIRECTORY_SEPARATOR . ltrim($logFile, '/');
         }
 
+        $output = '[%datetime%] %level_name%: %message%' . PHP_EOL;
+        $formatter = new LineFormatter($output, 'Y-m-d H:i:s.u');
+
         $logger = new Logger(
             'CertbotTransIpDns01',
             [
-                new StreamHandler('php://stdout', $logLevel),
-                new StreamHandler($logFile, $logLevel),
+                (new StreamHandler('php://stdout', $logLevel))->setFormatter($formatter),
+                (new StreamHandler($logFile, $logLevel))->setFormatter($formatter),
             ]
         );
 
