@@ -1,4 +1,5 @@
 <?php
+
 namespace RoyBongers\CertbotTransIpDns01\Certbot\Requests;
 
 use RoyBongers\CertbotTransIpDns01\Certbot\Requests\Interfaces\HookRequestInterface;
@@ -15,5 +16,5 @@ abstract class AbstractHookRequest implements HookRequestInterface
         return getenv('CERTBOT_DOMAIN');
     }
 
-    abstract public function getHookName(): string ;
+    abstract public function getHookName(): string;
 }

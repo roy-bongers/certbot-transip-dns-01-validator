@@ -23,7 +23,7 @@ class CertbotDns01 implements LoggerAwareInterface
     private $provider;
 
     /** @var Logger $logger */
-    private $logger;
+    protected $logger;
 
     public function __construct(ProviderInterface $provider)
     {
@@ -98,7 +98,7 @@ class CertbotDns01 implements LoggerAwareInterface
 
             // Query each nameserver and make sure the TXT record exists.
             foreach ($nameservers as $index => $nameserver) {
-                if ($this->nameserverIsUpdated($nameserver, $challengeRecord.'.'.$domain, $challenge)) {
+                if ($this->nameserverIsUpdated($nameserver, $challengeRecord . '.' . $domain, $challenge)) {
                     $this->logger->debug(sprintf("Nameserver '%s' is up-to-date", $nameserver));
                     $updatedRecords++;
                 }

@@ -4,18 +4,18 @@ namespace RoyBongers\CertbotTransIpDns01;
 
 use Exception;
 use Monolog\Logger;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LogLevel;
-use RoyBongers\CertbotTransIpDns01\Certbot\Requests\AuthHookRequest;
-use RoyBongers\CertbotTransIpDns01\Certbot\Requests\CleanupHookRequest;
-use RoyBongers\CertbotTransIpDns01\Certbot\Requests\Interfaces\HookRequestInterface;
-use \RuntimeException;
-use \Transip_ApiSettings;
+use RuntimeException;
+use Transip_ApiSettings;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerAwareInterface;
 use Monolog\Handler\StreamHandler;
 use RoyBongers\CertbotTransIpDns01\Providers\TransIp;
 use RoyBongers\CertbotTransIpDns01\Certbot\CertbotDns01;
+use RoyBongers\CertbotTransIpDns01\Certbot\Requests\AuthHookRequest;
+use RoyBongers\CertbotTransIpDns01\Certbot\Requests\CleanupHookRequest;
+use RoyBongers\CertbotTransIpDns01\Certbot\Requests\Interfaces\HookRequestInterface;
 
 class Bootstrap implements LoggerAwareInterface
 {
@@ -31,8 +31,9 @@ class Bootstrap implements LoggerAwareInterface
 
     public function __construct(HookRequestInterface $request)
     {
-        $this->setUp();
         try {
+            $this->setUp();
+
             if ($request instanceof AuthHookRequest) {
                 $this->acme2->authHook($request);
             } elseif ($request instanceof CleanupHookRequest) {
@@ -68,15 +69,19 @@ class Bootstrap implements LoggerAwareInterface
 
     private function loadConfig(): array
     {
-        if (!file_exists('config/transip.php')) {
+        if (!file_exists(APP_ROOT . '/config/transip.php')) {
             throw new RuntimeException('Config file could not be found');
         }
 
-        return include('config/transip.php');
+        return include(APP_ROOT . '/config/transip.php');
     }
 
     private function initializeLogger(string $logLevel = LogLevel::INFO, $logFile = self::LOG_FILE): void
     {
+        if (realpath($logFile) !== $logFile) {
+            $logFile = APP_ROOT . DIRECTORY_SEPARATOR . ltrim($logFile, '/');
+        }
+
         $logger = new Logger(
             'CertbotTransIpDns01',
             [
