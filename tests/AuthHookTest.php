@@ -3,6 +3,7 @@
 namespace RoyBongers\CertbotTransIpDns01\Tests;
 
 use Mockery;
+use RuntimeException;
 use PHPUnit\Framework\TestCase;
 use PurplePixie\PhpDns\DNSQuery;
 use PurplePixie\PhpDns\DNSAnswer;
@@ -70,7 +71,24 @@ class AuthHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=example.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
+
+        $this->acme2->authHook(new AuthHookRequest());
+    }
+
+    public function testItThrowsRuntimeExceptionWhenQueryingNameserversTimeouts(): void
+    {
+        putenv('CERTBOT_DOMAIN=domain.com');
+        putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
+
+        $this->provider->shouldReceive('createChallengeDnsRecord');
+
+        // mock DNSQuery class
+        $dnsAnswer = $this->createDnsAnswer('domain.com', 'HowDoYouKnowSoMuchAboutSwallows');
+        $this->dnsQuery->shouldReceive('Query')->andReturn($dnsAnswer);
+        $this->dnsQuery->shouldReceive('hasError')->andReturnFalse();
+
+        $this->expectException(RuntimeException::class);
 
         $this->acme2->authHook(new AuthHookRequest());
     }
@@ -89,6 +107,7 @@ class AuthHookTest extends TestCase
         );
         $dnsAnswer = new DNSAnswer();
         $dnsAnswer->addResult($dnsResult);
+
         return $dnsAnswer;
     }
 
@@ -101,7 +120,7 @@ class AuthHookTest extends TestCase
 
         $this->dnsQuery = Mockery::mock('overload:'.DNSQuery::class);
 
-        $this->acme2 = new CertbotDns01($this->provider, 0);
+        $this->acme2 = new CertbotDns01($this->provider, 0, 3);
 
         DnsMock::register(CertbotDns01::class);
         DnsMock::withMockedHosts([
