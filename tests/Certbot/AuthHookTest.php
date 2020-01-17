@@ -16,13 +16,13 @@ use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
 class AuthHookTest extends TestCase
 {
     /** @var CertbotDns01 $acme2 */
-    protected $acme2;
+    private $acme2;
 
     /** @var ProviderInterface $provider */
-    protected $provider;
+    private $provider;
 
     /** @var DNSQuery $dnsQuery */
-    protected $dnsQuery;
+    private $dnsQuery;
 
     public function testAuthHookWithPrimaryDomain(): void
     {

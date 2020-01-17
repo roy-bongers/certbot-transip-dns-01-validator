@@ -10,10 +10,10 @@ use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
 class CleanupHookTest extends TestCase
 {
     /** @var CertbotDns01 $acme2 */
-    protected $acme2;
+    private $acme2;
 
     /** @var ProviderInterface $provider */
-    protected $provider;
+    private $provider;
 
     public function testCleanupHookWithPrimaryDomain(): void
     {
