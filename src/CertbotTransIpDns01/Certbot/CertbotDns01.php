@@ -17,7 +17,7 @@ class CertbotDns01 implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /** @var int $sleep number of seconds to sleep between nameserver polling rounds */
-    private $sleep = 30;
+    private $sleep;
 
     /** @var ProviderInterface $provider */
     private $provider;
@@ -25,10 +25,11 @@ class CertbotDns01 implements LoggerAwareInterface
     /** @var Logger $logger */
     protected $logger;
 
-    public function __construct(ProviderInterface $provider)
+    public function __construct(ProviderInterface $provider, int $sleep = 30)
     {
         $this->provider = $provider;
         $this->logger = new NullLogger();
+        $this->sleep = $sleep;
     }
 
     public function authHook(AuthHookRequest $request): void
@@ -66,7 +67,7 @@ class CertbotDns01 implements LoggerAwareInterface
             }
         }
 
-        throw new RuntimeException('Can\'t manage DNS for given domain (%s).', reset($domainGuesses));
+        throw new RuntimeException(sprintf('Can\'t manage DNS for given domain (%s).', reset($domainGuesses)));
     }
 
     private function getDomainGuesses(string $fullyQualifiedDomainName): array
