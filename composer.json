@@ -1,11 +1,10 @@
 {
     "name": "roy-bongers/certbot-transip-dns-01-validator",
     "description": "Certbot DNS-01 validation for wildcard certificates (ACME-v2)",
-    "version": "2.0.0",
     "type": "project",
     "keywords": ["certbot", "transip", "dns-01", "letsencrypt"],
     "homepage": "https://github.com/roy-bongers/certbot-transip-dns-01-validator",
-    "license": "GPL-3.0",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Roy Bongers",
