@@ -1,6 +1,6 @@
 <?php
 
-namespace RoyBongers\CertbotTransIpDns01\Tests;
+namespace RoyBongers\CertbotTransIpDns01\Tests\Certbot;
 
 use Mockery;
 use RuntimeException;
