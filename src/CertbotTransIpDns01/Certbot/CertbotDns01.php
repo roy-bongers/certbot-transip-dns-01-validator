@@ -123,7 +123,7 @@ class CertbotDns01 implements LoggerAwareInterface
                     throw new RuntimeException(sprintf(
                         'Could not successfully query nameservers within %d tries (%d seconds)',
                         $this->maxTries,
-                            $this->sleep * $this->maxTries
+                        $this->sleep * $this->maxTries
                     ));
                 }
             } else {

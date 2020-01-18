@@ -1,4 +1,4 @@
-name: PHP Composer
+name: Run PHPUnit & PHPCS syle check
 
 on: [push]
 
@@ -6,6 +6,12 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    name: Build (PHP ${{ matrix.php-versions }})
+
+    strategy:
+      matrix:
+        php: [7.1, 7.2, 7.3, 7.4]
 
     steps:
       - uses: actions/checkout@v1
@@ -18,3 +24,7 @@ jobs:
 
       - name: Run test suite
         run: composer test
+
+      - name: Code Style check
+        run: php vendor/bin/phpcs --standard=psr12 src/
+        continue-on-error: true
