@@ -42,6 +42,9 @@
     "scripts": {
         "test": [
             "./vendor/bin/phpunit --colors=always"
+        ],
+        "style-check": [
+            "./vendor/bin/phpcs --standard=psr12 src/"
         ]
     }
 }

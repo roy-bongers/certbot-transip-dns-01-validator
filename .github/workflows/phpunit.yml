@@ -26,5 +26,5 @@ jobs:
         run: composer test
 
       - name: Code Style check
-        run: php vendor/bin/phpcs --standard=psr12 src/
+        run: composer style-check
         continue-on-error: true
