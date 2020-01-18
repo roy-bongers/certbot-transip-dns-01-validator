@@ -17,7 +17,10 @@ class CertbotDns01 implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /** @var int $sleep number of seconds to sleep between nameserver polling rounds */
-    private $sleep = 30;
+    private $sleep;
+
+    /** @var int $maxTries maximum number of times the nameservers will be queried before throwing an exception */
+    private $maxTries;
 
     /** @var ProviderInterface $provider */
     private $provider;
@@ -25,10 +28,12 @@ class CertbotDns01 implements LoggerAwareInterface
     /** @var Logger $logger */
     protected $logger;
 
-    public function __construct(ProviderInterface $provider)
+    public function __construct(ProviderInterface $provider, int $sleep = 30, int $maxTries = 15)
     {
         $this->provider = $provider;
         $this->logger = new NullLogger();
+        $this->sleep = $sleep;
+        $this->maxTries = $maxTries;
     }
 
     public function authHook(AuthHookRequest $request): void
@@ -66,7 +71,7 @@ class CertbotDns01 implements LoggerAwareInterface
             }
         }
 
-        throw new RuntimeException('Can\'t manage DNS for given domain (%s).', reset($domainGuesses));
+        throw new RuntimeException(sprintf('Can\'t manage DNS for given domain (%s).', reset($domainGuesses)));
     }
 
     private function getDomainGuesses(string $fullyQualifiedDomainName): array
@@ -87,8 +92,10 @@ class CertbotDns01 implements LoggerAwareInterface
      */
     private function waitForNameServers(string $domain, string $challengeRecord, string $challenge): void
     {
-        $nameservers = $this->getNameServers($domain);
+        $tries = 0;
         $updatedRecords = 0;
+
+        $nameservers = $this->getNameServers($domain);
         $totalNameservers = count($nameservers);
 
         $this->logger->info(sprintf('Waiting until nameservers (%s) are up-to-date', implode(', ', $nameservers)));
@@ -105,14 +112,20 @@ class CertbotDns01 implements LoggerAwareInterface
             }
 
             if ($updatedRecords < $totalNameservers) {
-                $this->logger->debug(
-                    sprintf(
-                        '%d of %d nameservers are ready. Retrying in %d seconds',
-                        $updatedRecords,
-                        $totalNameservers,
-                        $this->sleep
-                    )
-                );
+                $this->logger->debug(sprintf(
+                    '%d of %d nameservers are ready. Retrying in %d seconds',
+                    $updatedRecords,
+                    $totalNameservers,
+                    $this->sleep
+                ));
+                $tries++;
+                if ($tries > $this->maxTries) {
+                    throw new RuntimeException(sprintf(
+                        'Could not successfully query nameservers within %d tries (%d seconds)',
+                        $this->maxTries,
+                        $this->sleep * $this->maxTries
+                    ));
+                }
             } else {
                 $this->logger->info('All nameservers are updated!');
                 $this->logger->debug(sprintf('Sleeping another %d seconds to be sure', $this->sleep));
@@ -129,8 +142,14 @@ class CertbotDns01 implements LoggerAwareInterface
         $dnsResults = $dnsQuery->Query($record, 'TXT');
         $this->logger->debug(sprintf('Querying TXT %s @%s', $record, $nameserver));
 
-        if ((false === $dnsResults) || (false !== $dnsQuery->hasError())) {
+        if (false === $dnsResults) {
+            $this->logger->error('Empty DNS result');
+            return false;
+        }
+
+        if (false !== $dnsQuery->hasError()) {
             $this->logger->error($dnsQuery->getLasterror());
+            return false;
         }
 
         foreach ($dnsResults as $dnsResult) {

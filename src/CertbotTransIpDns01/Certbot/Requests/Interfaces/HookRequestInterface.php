@@ -1,4 +1,5 @@
 <?php
+
 namespace RoyBongers\CertbotTransIpDns01\Certbot\Requests\Interfaces;
 
 interface HookRequestInterface
