@@ -26,5 +26,5 @@ jobs:
         run: composer test
 
       - name: Code Style check
-        run: composer style-check
+        run: composer lint
         continue-on-error: true

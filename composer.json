@@ -43,7 +43,7 @@
         "test": [
             "./vendor/bin/phpunit --colors=always"
         ],
-        "style-check": [
+        "lint": [
             "./vendor/bin/phpcs"
         ]
     }
