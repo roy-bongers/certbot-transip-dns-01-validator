@@ -6,10 +6,10 @@ challenge for which you need to create a DNS (TXT) record. [TransIP][3] has an A
 When you need to renew your certificate you also need to perform the DNS-01 challenge again. This should happen automatically.
 
 ## Requirements
-Version 2.x has the following requirements. If you use older PHP versions you have to use the latest 1.x release.
+Version 2 has the following requirements. If you use older PHP versions you have to use the latest 1.x release.
 Upgrading? See the [upgrade guide](#upgrade-guide).
 * PHP 7.1 with XML and SOAP extensions enabled
-* At least [Certbot][2] v0.22 for ACME-v2 support
+* [Certbot][2] >= v0.22
 * The [composer][3] package manager
 
 ## Installation
@@ -19,7 +19,7 @@ Upgrading? See the [upgrade guide](#upgrade-guide).
 * Edit `config/transip.php` and set your login and private key.
 * Make sure you set the access to this file to only allow your user to read the contents of this file (on linux `chmod og-rwx config/transip.php`)
 
-### Request a new wildcard certificate
+## Request a wildcard certificate
 
 Use this command to request the certificate. Replace "/path/to/" with the actual path on your system.
 It takes a couple of minutes for the nameservers to be updated. Please be patient until the validation completes.
@@ -34,21 +34,23 @@ If you need to do some testing add the staging flag to the certbot command:
 --test-cert
 ```
 
-### Renew an existing certificate
 To automatically renew your certificate add the Certbot renew command in a cron job so it runs at least monthly.
 ```shell
 /usr/bin/certbot renew
 ````
 
-### Upgrade guide
+## Supported platforms
+The code is tested on a Debian based Linux distribution (Ubuntu LTS) and currently supported PHP versions (>= 7.2). It probably works fine on other
+systems and versions of PHP but no guarantees are made.
+
+## Upgrade guide
 Version 2.0 is a complete rewrite of the code base and breaks with the original version. Follow these steps to upgrade:
  1. Checkout the latest master branch
  1. Follow the [installation guide](#installation)
  1. Remove the `Transip` folder after copying your login and private key to `config/transip.php`
  1. You are ready to go!
-
+ 
 ## Contributors
-
 When creating an issue please include a detailed description of what you are trying to execute and any output you
 receive. Feel free to fork the project and create a pull request. Make sure your code complies with the [PSR-12][5]
 coding standards.
