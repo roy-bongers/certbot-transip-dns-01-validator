@@ -22,9 +22,11 @@ class TransIpTest extends TestCase
 
     public function testItCreatesChallengeDnsRecord(): void
     {
-        $this->domainService->shouldReceive('getInfo')->andReturn((object) [
-            'dnsEntries' => $this->generateDnsRecords(),
-        ]);
+        $this->domainService->shouldReceive('getInfo')->andReturn(
+            (object)[
+                'dnsEntries' => $this->generateDnsRecords(),
+            ]
+        );
 
         $expectedDnsEntry = new Transip_DnsEntry('_acme-challenge', 60, 'TXT', 'AfricanOrEuropeanSwallow');
         $expectedDnsRecordCount = count($this->domainService->getInfo('domain.com')->dnsEntries) + 1;
@@ -44,9 +46,11 @@ class TransIpTest extends TestCase
     public function testItCleansChallengeDnsRecord(): void
     {
         $challengeDnsEntry = new Transip_DnsEntry('_acme-challenge', 60, 'TXT', 'AfricanOrEuropeanSwallow');
-        $this->domainService->shouldReceive('getInfo')->andReturn((object) [
-            'dnsEntries' => $this->generateDnsRecords($challengeDnsEntry),
-        ]);
+        $this->domainService->shouldReceive('getInfo')->andReturn(
+            (object)[
+                'dnsEntries' => $this->generateDnsRecords($challengeDnsEntry),
+            ]
+        );
 
         $expectedDnsRecordCount = count($this->domainService->getInfo('domain.com')->dnsEntries) - 1;
 
@@ -88,8 +92,8 @@ class TransIpTest extends TestCase
         parent::setUp();
 
         $this->transIp = new TransIp();
-        $this->dnsService = Mockery::mock('overload:'.Transip_DnsService::class);
-        $this->domainService = Mockery::mock('overload:'.Transip_DomainService::class);
+        $this->dnsService = Mockery::mock('overload:' . Transip_DnsService::class);
+        $this->domainService = Mockery::mock('overload:' . Transip_DomainService::class);
     }
 
     public function tearDown(): void

@@ -1,4 +1,5 @@
 <?php
+
 namespace RoyBongers\CertbotTransIpDns01\Tests\Certbot;
 
 use Mockery;
@@ -23,7 +24,7 @@ class CleanupHookTest extends TestCase
         $this->provider->shouldReceive('cleanChallengeDnsRecord')->withArgs([
             'domain.com',
             '_acme-challenge',
-            'AfricanOrEuropeanSwallow'
+            'AfricanOrEuropeanSwallow',
         ])->once();
 
         $this->expectNotToPerformAssertions();
@@ -39,7 +40,7 @@ class CleanupHookTest extends TestCase
         $this->provider->shouldReceive('cleanChallengeDnsRecord')->withArgs([
             'domain.com',
             '_acme-challenge.sub',
-            'AfricanOrEuropeanSwallow'
+            'AfricanOrEuropeanSwallow',
         ])->once();
 
         $this->expectNotToPerformAssertions();

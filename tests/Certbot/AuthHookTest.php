@@ -118,7 +118,7 @@ class AuthHookTest extends TestCase
         $this->provider = Mockery::mock(ProviderInterface::class);
         $this->provider->shouldReceive('getDomainNames')->andReturn(['domain.com', 'transip.nl']);
 
-        $this->dnsQuery = Mockery::mock('overload:'.DNSQuery::class);
+        $this->dnsQuery = Mockery::mock('overload:' . DNSQuery::class);
 
         $this->acme2 = new CertbotDns01($this->provider, 0, 3);
 
