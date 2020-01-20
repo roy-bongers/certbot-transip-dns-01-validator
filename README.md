@@ -46,10 +46,10 @@ docker run -ti \
 -v "${PWD}/letsencrypt:/etc/letsencrypt" \
 -v "${PWD}/config:/config" \
 -v "${PWD}/logs:/logs" \
-roy-bongers/certbot-transip \
+rbongers/certbot-dns-transip \
 certonly --manual --preferred-challenge=dns  \
---manual-auth-hook=/opt/certbot-transip/auth-hook \
---manual-cleanup-hook=/opt/certbot-transip/cleanup-hook \
+--manual-auth-hook=./auth-hook \
+--manual-cleanup-hook=./cleanup-hook \
 -d 'domain.com' -d '*.domain.com'
 ```
 And to renew certificates:
@@ -58,7 +58,7 @@ docker run -ti \
 -v "${PWD}/letsencrypt:/etc/letsencrypt" \
 -v "${PWD}/config:/config" \
 -v "${PWD}/logs:/logs" \
-roy-bongers/certbot-transip \
+rbongers/certbot-dns-transip \
 renew
 ```
 
