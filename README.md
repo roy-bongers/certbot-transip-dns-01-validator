@@ -39,6 +39,29 @@ To automatically renew your certificate add the Certbot renew command in a cron 
 /usr/bin/certbot renew
 ````
 
+## Docker
+There is also a docker container which you can use.
+```shell
+docker run -ti \
+-v "${PWD}/letsencrypt:/etc/letsencrypt" \
+-v "${PWD}/config:/config" \
+-v "${PWD}/logs:/logs" \
+roy-bongers/certbot-transip \
+certonly --manual --preferred-challenge=dns  \
+--manual-auth-hook=/opt/certbot-transip/auth-hook \
+--manual-cleanup-hook=/opt/certbot-transip/cleanup-hook \
+-d 'domain.com' -d '*.domain.com'
+```
+And to renew certificates:
+```shell
+docker run -ti \
+-v "${PWD}/letsencrypt:/etc/letsencrypt" \
+-v "${PWD}/config:/config" \
+-v "${PWD}/logs:/logs" \
+roy-bongers/certbot-transip \
+renew
+```
+
 ## Supported platforms
 The code is tested on a Debian based Linux distribution (Ubuntu LTS) and currently supported PHP versions (>= 7.2). It probably works fine on other
 systems and versions of PHP but no guarantees are made.
