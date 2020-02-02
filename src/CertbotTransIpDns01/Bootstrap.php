@@ -48,16 +48,16 @@ class Bootstrap implements LoggerAwareInterface
 
     private function setUp(): void
     {
-        $config = $this->loadConfig();
-
-        // set up logging
-        $loglevel = $config['loglevel'] ?? LogLevel::INFO;
-        $logfile = $config['logfile'] ?? self::LOG_FILE;
-        $this->initializeLogger($loglevel, $logfile);
+        $config = new ConfigLoader();
 
         // setup TranIP API credentials.
-        Transip_ApiSettings::$login = trim($config['login'] ?? '');
-        Transip_ApiSettings::$privateKey = trim($config['private_key'] ?? '');
+        Transip_ApiSettings::$login = trim($config->get($config['login']));
+        Transip_ApiSettings::$privateKey = trim($config->get('private_key'));
+
+        // set up logging
+        $loglevel = $config->get('loglevel', LogLevel::INFO);
+        $logfile = $config->get('logfile', self::LOG_FILE);
+        $this->initializeLogger($loglevel, $logfile);
 
         // initialize TransIp Class
         $provider = new TransIp();
@@ -68,30 +68,21 @@ class Bootstrap implements LoggerAwareInterface
         $this->acme2->setLogger($this->logger);
     }
 
-    private function loadConfig(): array
+    private function initializeLogger(string $logLevel = LogLevel::INFO, string $logFile = null): void
     {
-        if (!file_exists(APP_ROOT . '/config/transip.php')) {
-            throw new RuntimeException('Config file could not be found');
-        }
-
-        return include(APP_ROOT . '/config/transip.php');
-    }
-
-    private function initializeLogger(string $logLevel = LogLevel::INFO, $logFile = self::LOG_FILE): void
-    {
-        if (realpath($logFile) !== $logFile) {
-            $logFile = APP_ROOT . DIRECTORY_SEPARATOR . ltrim($logFile, '/');
-        }
-
         $output = '[%datetime%] %level_name%: %message%' . PHP_EOL;
         $formatter = new LineFormatter($output, 'Y-m-d H:i:s.u');
 
+        $handlers = [
+            (new StreamHandler('php://stdout', $logLevel))->setFormatter($formatter),
+        ];
+        if ($logFile !== null) {
+            $handlers[] = (new StreamHandler($logFile, $logLevel))->setFormatter($formatter);
+        }
+
         $logger = new Logger(
             'CertbotTransIpDns01',
-            [
-                (new StreamHandler('php://stdout', $logLevel))->setFormatter($formatter),
-                (new StreamHandler($logFile, $logLevel))->setFormatter($formatter),
-            ]
+            $handlers
         );
 
         $this->setLogger($logger);
