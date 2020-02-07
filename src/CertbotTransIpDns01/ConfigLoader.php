@@ -28,6 +28,15 @@ class ConfigLoader
 
     public function get(string $key, $default = null): ?string
     {
-        return $this->config[$key] ?? getenv(strtoupper($key)) ?? $default;
+        if (isset($this->config[$key])) {
+            return $this->config[$key];
+        }
+
+        $envValue = getenv(strtoupper($key));
+        if ($envValue !== false) {
+            return $envValue;
+        }
+
+        return $default;
     }
 }
