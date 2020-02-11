@@ -41,7 +41,7 @@ class TransIp implements ProviderInterface
 
         foreach ($dnsEntries as $index => $dnsEntry) {
             if ($dnsEntry->name === $challengeName && $dnsEntry->content === $challengeValue) {
-                $this->logger->info(
+                $this->logger->debug(
                     sprintf('Removing challenge DNS record(%s 60 TXT %s)', $dnsEntry->name, $dnsEntry->content)
                 );
                 unset($dnsEntries[$index]);
