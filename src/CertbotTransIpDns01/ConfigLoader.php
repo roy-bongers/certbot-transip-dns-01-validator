@@ -25,9 +25,10 @@ class ConfigLoader
             $this->config = include(APP_ROOT . '/config/transip.php');
         }
 
-        foreach ($this->requires as $required) {
-            if ($this->get($required) === null) {
-                throw new RuntimeException(sprintf("Config option '%s' not found", $required));
+        foreach ($this->requires as $requiredConfigKey) {
+            $requiredConfigKeyWithProvider = $this->get('provider') . '_' . $requiredConfigKey;
+            if ($this->get($requiredConfigKeyWithProvider, $this->get($requiredConfigKey)) === null) {
+                throw new RuntimeException(sprintf("Config option '%s' not found", $requiredConfigKey));
             }
         }
     }

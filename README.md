@@ -53,13 +53,13 @@ To automatically renew your certificate add the Certbot renew command in a cron 
 
 ## Docker
 There is also a docker container which you can use. You can either bind mount the `config` and / or `logs` folder or use
-`ENV` variables.
+`ENV` variables. The application runs in the `/opt/certbot-dns-transip` directory.
 
-```shell
+```shell script
 docker run -ti \
--v "${PWD}/letsencrypt:/etc/letsencrypt" \
--v "${PWD}/config:/opt/certbot-dns-transip/config" \
--v "${PWD}/logs:/opt/certbot-dns-transip/logs" \
+--mount type=bind,source="${PWD}"/letsencrypt,target="/etc/letsencrypt" \
+--mount type=bind,source="${PWD}"/config,target="/opt/certbot-dns-transip/config" \
+--mount type=bind,source="${PWD}"/logs,target="/opt/certbot-dns-transip/logs" \
 rbongers/certbot-dns-transip \
 certonly --manual --preferred-challenge=dns  \
 --manual-auth-hook=/opt/certbot-dns-transip/auth-hook \
@@ -68,11 +68,11 @@ certonly --manual --preferred-challenge=dns  \
 ```
 
 And to renew certificates:
-```shell
+```shell script
 docker run -ti \
--v "${PWD}/letsencrypt:/etc/letsencrypt" \
--v "${PWD}/config:/opt/certbot-dns-transip/config" \
--v "${PWD}/logs:/opt/certbot-dns-transip/logs" \
+--mount type=bind,source="${PWD}"/letsencrypt,target="/etc/letsencrypt" \
+--mount type=bind,source="${PWD}"/config,target="/opt/certbot-dns-transip/config" \
+--mount type=bind,source="${PWD}"/logs,target="/opt/certbot-dns-transip/logs" \
 rbongers/certbot-dns-transip \
 renew
 ```

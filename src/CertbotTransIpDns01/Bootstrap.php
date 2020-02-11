@@ -33,9 +33,9 @@ class Bootstrap implements LoggerAwareInterface
 
     public function __construct(HookRequestInterface $request)
     {
-        try {
-            $this->setUp();
+        $this->setUp();
 
+        try {
             if ($request instanceof AuthHookRequest) {
                 $this->acme2->authHook($request);
             } elseif ($request instanceof CleanupHookRequest) {
