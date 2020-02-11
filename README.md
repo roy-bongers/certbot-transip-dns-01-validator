@@ -14,10 +14,22 @@ Upgrading? See the [upgrade guide](#upgrade-guide).
 
 ## Installation
 * Run `composer install --no-dev`
-* Copy `config/transip.php.example` to `config/transip.php`
 * Acquire an API key for TransIP in [your account][4] on their website
+
+### Configuration
+There are two methods to set the login and private key. Via a config file and `ENV` variables.
+
+#### File
+* Copy `config/transip.php.example` to `config/transip.php`
 * Edit `config/transip.php` and set your login and private key.
 * Make sure you set the access to this file to only allow your user to read the contents of this file (on linux `chmod og-rwx config/transip.php`)
+
+#### ENV
+Only the first two variables are required.
+* `TRANSIP_LOGIN`
+* `TRANSIP_PRIVATE_KEY`
+* `LOGLEVEL`
+* `LOGFILE`
 
 ## Request a wildcard certificate
 
@@ -40,31 +52,34 @@ To automatically renew your certificate add the Certbot renew command in a cron 
 ````
 
 ## Docker
-There is also a docker container which you can use.
+There is also a docker container which you can use. You can either bind mount the `config` and / or `logs` folder or use
+`ENV` variables.
+
 ```shell
 docker run -ti \
 -v "${PWD}/letsencrypt:/etc/letsencrypt" \
--v "${PWD}/config:/config" \
--v "${PWD}/logs:/logs" \
+-v "${PWD}/config:/opt/certbot-dns-transip/config" \
+-v "${PWD}/logs:/opt/certbot-dns-transip/logs" \
 rbongers/certbot-dns-transip \
 certonly --manual --preferred-challenge=dns  \
---manual-auth-hook=./auth-hook \
---manual-cleanup-hook=./cleanup-hook \
+--manual-auth-hook=/opt/certbot-dns-transip/auth-hook \
+--manual-cleanup-hook=/opt/certbot-dns-transip/cleanup-hook \
 -d 'domain.com' -d '*.domain.com'
 ```
+
 And to renew certificates:
 ```shell
 docker run -ti \
 -v "${PWD}/letsencrypt:/etc/letsencrypt" \
--v "${PWD}/config:/config" \
--v "${PWD}/logs:/logs" \
+-v "${PWD}/config:/opt/certbot-dns-transip/config" \
+-v "${PWD}/logs:/opt/certbot-dns-transip/logs" \
 rbongers/certbot-dns-transip \
 renew
 ```
 
 ## Supported platforms
-The code is tested on a Debian based Linux distribution (Ubuntu LTS) and currently supported PHP versions (>= 7.2). It probably works fine on other
-systems and versions of PHP but no guarantees are made.
+The code is tested on a Debian based Linux distribution (Ubuntu LTS) and currently supported PHP versions (>= 7.2).
+It probably works fine on other systems and versions of PHP but no guarantees are made.
 
 ## Upgrade guide
 Version 2.0 is a complete rewrite of the code base and breaks with the original version. Follow these steps to upgrade:

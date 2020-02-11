@@ -4,8 +4,6 @@ namespace RoyBongers\CertbotTransIpDns01;
 
 use Exception;
 use Monolog\Logger;
-use Psr\Log\LogLevel;
-use RuntimeException;
 use Transip_ApiSettings;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -16,19 +14,22 @@ use RoyBongers\CertbotTransIpDns01\Providers\TransIp;
 use RoyBongers\CertbotTransIpDns01\Certbot\CertbotDns01;
 use RoyBongers\CertbotTransIpDns01\Certbot\Requests\AuthHookRequest;
 use RoyBongers\CertbotTransIpDns01\Certbot\Requests\CleanupHookRequest;
+use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
 use RoyBongers\CertbotTransIpDns01\Certbot\Requests\Interfaces\HookRequestInterface;
 
 class Bootstrap implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    public const LOG_FILE = 'logs/certbot-transip.log';
-
     /** @var LoggerInterface $logger */
     protected $logger;
 
     /** @var CertbotDns01 $acme2 */
     protected $acme2;
+
+    protected $providers = [
+        'transip' => TransIp::class,
+    ];
 
     public function __construct(HookRequestInterface $request)
     {
@@ -51,16 +52,20 @@ class Bootstrap implements LoggerAwareInterface
         $config = new ConfigLoader();
 
         // setup TranIP API credentials.
-        Transip_ApiSettings::$login = trim($config->get($config['login']));
-        Transip_ApiSettings::$privateKey = trim($config->get('private_key'));
+        $login = $config->get('transip_login', $config->get('login'));
+        $privateKey = $config->get('transip_private_key', $config->get('private_key'));
+
+        Transip_ApiSettings::$login = trim($login);
+        Transip_ApiSettings::$privateKey = trim($privateKey);
 
         // set up logging
-        $loglevel = $config->get('loglevel', LogLevel::INFO);
-        $logfile = $config->get('logfile', self::LOG_FILE);
+        $loglevel = $config->get('loglevel');
+        $logfile = $config->get('logfile');
         $this->initializeLogger($loglevel, $logfile);
 
         // initialize TransIp Class
-        $provider = new TransIp();
+        $provider = new $this->providers[$config->get('provider')]();
+        /** @var ProviderInterface $provider */
         $provider->setLogger($this->logger);
 
         // initialize Certbot DNS01 challenge class.
@@ -68,7 +73,7 @@ class Bootstrap implements LoggerAwareInterface
         $this->acme2->setLogger($this->logger);
     }
 
-    private function initializeLogger(string $logLevel = LogLevel::INFO, string $logFile = null): void
+    private function initializeLogger(string $logLevel, string $logFile = null): void
     {
         $output = '[%datetime%] %level_name%: %message%' . PHP_EOL;
         $formatter = new LineFormatter($output, 'Y-m-d H:i:s.u');

@@ -2,7 +2,6 @@
 
 namespace RoyBongers\CertbotTransIpDns01\Providers;
 
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Psr\Log\LoggerInterface;
@@ -11,7 +10,7 @@ use Transip_DomainService;
 use Transip_DnsService;
 use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
 
-class TransIp implements ProviderInterface, LoggerAwareInterface
+class TransIp implements ProviderInterface
 {
     use LoggerAwareTrait;
 

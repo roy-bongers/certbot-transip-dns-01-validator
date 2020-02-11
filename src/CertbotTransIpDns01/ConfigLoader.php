@@ -2,6 +2,7 @@
 
 namespace RoyBongers\CertbotTransIpDns01;
 
+use Psr\Log\LogLevel;
 use RuntimeException;
 
 class ConfigLoader
@@ -11,6 +12,11 @@ class ConfigLoader
     private $requires = [
         'login',
         'private_key',
+    ];
+
+    private $defaults = [
+        'provider' => 'transip',
+        'loglevel' => LogLevel::INFO,
     ];
 
     public function __construct()
@@ -37,6 +43,6 @@ class ConfigLoader
             return $envValue;
         }
 
-        return $default;
+        return $default ?? $this->defaults[$key] ?? null;
     }
 }
