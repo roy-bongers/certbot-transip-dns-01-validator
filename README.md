@@ -3,7 +3,8 @@ Certbot DNS-01 validation for wildcard certificates (ACME-v2)
 
 I created this script to request wildcard SSL certificates from [Let's Encrypt][1]. You are required to do a DNS-01
 challenge for which you need to create a DNS (TXT) record. [TransIP][3] has an API which allows you to automate this.
-When you need to renew your certificate you also need to perform the DNS-01 challenge again. This should happen automatically.
+When you need to renew your certificate you also need to perform the DNS-01 challenge again. This should happen
+automatically.
 
 ## Requirements
 Version 2 has the following requirements. If you use older PHP versions you have to use the latest 1.x release.
@@ -15,21 +16,10 @@ Upgrading? See the [upgrade guide](#upgrade-guide).
 ## Installation
 * Run `composer install --no-dev`
 * Acquire an API key for TransIP in [your account][4] on their website
-
-### Configuration
-There are two methods to set the login and private key. Via a config file and `ENV` variables.
-
-#### File
 * Copy `config/transip.php.example` to `config/transip.php`
 * Edit `config/transip.php` and set your login and private key.
-* Make sure you set the access to this file to only allow your user to read the contents of this file (on linux `chmod og-rwx config/transip.php`)
-
-#### ENV
-Only the first two variables are required.
-* `TRANSIP_LOGIN`
-* `TRANSIP_PRIVATE_KEY`
-* `LOGLEVEL`
-* `LOGFILE`
+* Make sure you set the access to this file to only allow your user to read the contents of this file (on linux
+ `chmod og-rwx config/transip.php`)
 
 ## Request a wildcard certificate
 
@@ -52,8 +42,14 @@ To automatically renew your certificate add the Certbot renew command in a cron 
 ````
 
 ## Docker
-There is also a docker container which you can use. You can either bind mount the `config` and / or `logs` folder or use
-`ENV` variables. The application runs in the `/opt/certbot-dns-transip` directory.
+There is also a docker container which you can use. You can either bind mount the `config` folder or use `ENV` variables.
+These variables are available: `TRANSIP_LOGIN`, `TRANSIP_PRIVATE_KEY`, `LOGLEVEL`, `LOGFILE`.
+Only the first two variables are required.
+
+For information about values see `config/transip.php.example`. Multiline values (the private key) can be a bit harder
+to set. Make sure the entire private key is stored in the `TRANSIP_PRIVATE_KEY` variable!
+
+The application runs in the `/opt/certbot-dns-transip` directory and the certificates are created in `/etc/letsencrypt`.
 
 ```shell script
 docker run -ti \
