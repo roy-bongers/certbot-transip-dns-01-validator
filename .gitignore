@@ -2,6 +2,7 @@ config/transip.php
 vendor/
 logs/*
 !logs/.gitkeep
+letsencrypt
 
 # PHPStorm
 # User-specific stuff
