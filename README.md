@@ -15,8 +15,8 @@ Upgrading? See the [upgrade guide](#upgrade-guide).
 
 ## Installation
 * Run `composer install --no-dev`
-* Acquire an API key for TransIP in [your account][4] on their website
 * Copy `config/transip.php.example` to `config/transip.php`
+* Acquire an API key for TransIP in [your account][4] on their website
 * Edit `config/transip.php` and set your login and private key.
 * Make sure you set the access to this file to only allow your user to read the contents of this file (on linux
  `chmod og-rwx config/transip.php`)
