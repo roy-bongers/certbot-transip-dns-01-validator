@@ -4,8 +4,6 @@ namespace RoyBongers\CertbotTransIpDns01;
 
 use Exception;
 use Monolog\Logger;
-use Psr\Log\LogLevel;
-use RuntimeException;
 use Transip_ApiSettings;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -16,13 +14,12 @@ use RoyBongers\CertbotTransIpDns01\Providers\TransIp;
 use RoyBongers\CertbotTransIpDns01\Certbot\CertbotDns01;
 use RoyBongers\CertbotTransIpDns01\Certbot\Requests\AuthHookRequest;
 use RoyBongers\CertbotTransIpDns01\Certbot\Requests\CleanupHookRequest;
+use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
 use RoyBongers\CertbotTransIpDns01\Certbot\Requests\Interfaces\HookRequestInterface;
 
 class Bootstrap implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
-    public const LOG_FILE = 'logs/certbot-transip.log';
 
     /** @var LoggerInterface $logger */
     protected $logger;
@@ -30,11 +27,15 @@ class Bootstrap implements LoggerAwareInterface
     /** @var CertbotDns01 $acme2 */
     protected $acme2;
 
+    protected $providers = [
+        'transip' => TransIp::class,
+    ];
+
     public function __construct(HookRequestInterface $request)
     {
-        try {
-            $this->setUp();
+        $this->setUp();
 
+        try {
             if ($request instanceof AuthHookRequest) {
                 $this->acme2->authHook($request);
             } elseif ($request instanceof CleanupHookRequest) {
@@ -48,19 +49,23 @@ class Bootstrap implements LoggerAwareInterface
 
     private function setUp(): void
     {
-        $config = $this->loadConfig();
-
-        // set up logging
-        $loglevel = $config['loglevel'] ?? LogLevel::INFO;
-        $logfile = $config['logfile'] ?? self::LOG_FILE;
-        $this->initializeLogger($loglevel, $logfile);
+        $config = new ConfigLoader();
 
         // setup TranIP API credentials.
-        Transip_ApiSettings::$login = trim($config['login'] ?? '');
-        Transip_ApiSettings::$privateKey = trim($config['private_key'] ?? '');
+        $login = $config->get('transip_login', $config->get('login'));
+        $privateKey = $config->get('transip_private_key', $config->get('private_key'));
+
+        Transip_ApiSettings::$login = trim($login);
+        Transip_ApiSettings::$privateKey = trim($privateKey);
+
+        // set up logging
+        $loglevel = $config->get('loglevel');
+        $logfile = $config->get('logfile');
+        $this->initializeLogger($loglevel, $logfile);
 
         // initialize TransIp Class
-        $provider = new TransIp();
+        $provider = new $this->providers[$config->get('provider')]();
+        /** @var ProviderInterface $provider */
         $provider->setLogger($this->logger);
 
         // initialize Certbot DNS01 challenge class.
@@ -68,30 +73,21 @@ class Bootstrap implements LoggerAwareInterface
         $this->acme2->setLogger($this->logger);
     }
 
-    private function loadConfig(): array
+    private function initializeLogger(string $logLevel, string $logFile = null): void
     {
-        if (!file_exists(APP_ROOT . '/config/transip.php')) {
-            throw new RuntimeException('Config file could not be found');
-        }
-
-        return include(APP_ROOT . '/config/transip.php');
-    }
-
-    private function initializeLogger(string $logLevel = LogLevel::INFO, $logFile = self::LOG_FILE): void
-    {
-        if (realpath($logFile) !== $logFile) {
-            $logFile = APP_ROOT . DIRECTORY_SEPARATOR . ltrim($logFile, '/');
-        }
-
         $output = '[%datetime%] %level_name%: %message%' . PHP_EOL;
         $formatter = new LineFormatter($output, 'Y-m-d H:i:s.u');
 
+        $handlers = [
+            (new StreamHandler('php://stdout', $logLevel))->setFormatter($formatter),
+        ];
+        if ($logFile !== null) {
+            $handlers[] = (new StreamHandler($logFile, $logLevel))->setFormatter($formatter);
+        }
+
         $logger = new Logger(
             'CertbotTransIpDns01',
-            [
-                (new StreamHandler('php://stdout', $logLevel))->setFormatter($formatter),
-                (new StreamHandler($logFile, $logLevel))->setFormatter($formatter),
-            ]
+            $handlers
         );
 
         $this->setLogger($logger);

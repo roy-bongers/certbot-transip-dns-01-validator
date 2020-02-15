@@ -7,9 +7,10 @@
 # certbot-transip-dns-01-validator
 Certbot DNS-01 validation for wildcard certificates (ACME-v2)
 
-I created this script to request wildcard SSL certificates from [Let's Encrypt][1]. You are required to do a DNS-01
+I created this script to request wildcard SSL certificates from [Let’s Encrypt][1]. You are required to do a DNS-01
 challenge for which you need to create a DNS (TXT) record. [TransIP][3] has an API which allows you to automate this.
-When you need to renew your certificate you also need to perform the DNS-01 challenge again. This should happen automatically.
+When you need to renew your certificate you also need to perform the DNS-01 challenge again. This should happen
+automatically.
 
 ## Requirements
 Version 2 has the following requirements. If you use older PHP versions you have to use the latest 1.x release.
@@ -23,7 +24,8 @@ Upgrading? See the [upgrade guide](#upgrade-guide).
 * Copy `config/transip.php.example` to `config/transip.php`
 * Acquire an API key for TransIP in [your account][4] on their website
 * Edit `config/transip.php` and set your login and private key.
-* Make sure you set the access to this file to only allow your user to read the contents of this file (on linux `chmod og-rwx config/transip.php`)
+* Make sure you set the access to this file to only allow your user to read the contents of this file (on linux
+ `chmod og-rwx config/transip.php`)
 
 ## Request a wildcard certificate
 
@@ -45,9 +47,41 @@ To automatically renew your certificate add the Certbot renew command in a cron 
 /usr/bin/certbot renew
 ````
 
+## Docker
+There is also a docker container which you can use. You can either bind mount the `config` folder or use `ENV` variables.
+These variables are available: `TRANSIP_LOGIN`, `TRANSIP_PRIVATE_KEY`, `LOGLEVEL`, `LOGFILE`.
+Only the first two variables are required.
+
+For information about values see `config/transip.php.example`. Multiline values (the private key) can be a bit harder
+to set. Make sure the entire private key is stored in the `TRANSIP_PRIVATE_KEY` variable!
+
+The application runs in the `/opt/certbot-dns-transip` directory and the certificates are created in `/etc/letsencrypt`.
+
+```shell script
+docker run -ti \
+--mount type=bind,source="${PWD}"/letsencrypt,target="/etc/letsencrypt" \
+--mount type=bind,source="${PWD}"/config,target="/opt/certbot-dns-transip/config" \
+--mount type=bind,source="${PWD}"/logs,target="/opt/certbot-dns-transip/logs" \
+rbongers/certbot-dns-transip \
+certonly --manual --preferred-challenge=dns  \
+--manual-auth-hook=/opt/certbot-dns-transip/auth-hook \
+--manual-cleanup-hook=/opt/certbot-dns-transip/cleanup-hook \
+-d 'domain.com' -d '*.domain.com'
+```
+
+And to renew certificates:
+```shell script
+docker run -ti \
+--mount type=bind,source="${PWD}"/letsencrypt,target="/etc/letsencrypt" \
+--mount type=bind,source="${PWD}"/config,target="/opt/certbot-dns-transip/config" \
+--mount type=bind,source="${PWD}"/logs,target="/opt/certbot-dns-transip/logs" \
+rbongers/certbot-dns-transip \
+renew
+```
+
 ## Supported platforms
-The code is tested on a Debian based Linux distribution (Ubuntu LTS) and currently supported PHP versions (>= 7.2). It probably works fine on other
-systems and versions of PHP but no guarantees are made.
+The code is tested on a Debian based Linux distribution (Ubuntu LTS) and currently supported PHP versions (>= 7.2).
+It probably works fine on other systems and versions of PHP but no guarantees are made.
 
 ## Upgrade guide
 Version 2.0 is a complete rewrite of the code base and breaks with the original version. Follow these steps to upgrade:

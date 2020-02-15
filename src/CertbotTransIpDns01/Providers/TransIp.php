@@ -2,7 +2,6 @@
 
 namespace RoyBongers\CertbotTransIpDns01\Providers;
 
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Psr\Log\LoggerInterface;
@@ -11,7 +10,7 @@ use Transip_DomainService;
 use Transip_DnsService;
 use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
 
-class TransIp implements ProviderInterface, LoggerAwareInterface
+class TransIp implements ProviderInterface
 {
     use LoggerAwareTrait;
 
@@ -42,7 +41,7 @@ class TransIp implements ProviderInterface, LoggerAwareInterface
 
         foreach ($dnsEntries as $index => $dnsEntry) {
             if ($dnsEntry->name === $challengeName && $dnsEntry->content === $challengeValue) {
-                $this->logger->info(
+                $this->logger->debug(
                     sprintf('Removing challenge DNS record(%s 60 TXT %s)', $dnsEntry->name, $dnsEntry->content)
                 );
                 unset($dnsEntries[$index]);
@@ -59,11 +58,29 @@ class TransIp implements ProviderInterface, LoggerAwareInterface
             $this->domainNames = Transip_DomainService::getDomainNames();
         }
 
+        $this->logger->debug(sprintf('Domain names available: %s', implode(', ', $this->domainNames)));
+
         return $this->domainNames;
     }
 
     private function getDnsEntries(string $domainName): array
     {
-        return Transip_DomainService::getInfo($domainName)->dnsEntries;
+        $dnsEntries = Transip_DomainService::getInfo($domainName)->dnsEntries;
+
+        $this->logger->debug(sprintf('Existing DNS records for %s:', $domainName));
+
+        foreach ($dnsEntries as $dnsEntry) {
+            $this->logger->debug(
+                sprintf(
+                    '%s %s %s %s',
+                    $dnsEntry->name,
+                    $dnsEntry->expire,
+                    $dnsEntry->type,
+                    $dnsEntry->content
+                )
+            );
+        }
+
+        return $dnsEntries;
     }
 }

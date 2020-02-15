@@ -2,7 +2,9 @@
 
 namespace RoyBongers\CertbotTransIpDns01\Providers\Interfaces;
 
-interface ProviderInterface
+use Psr\Log\LoggerAwareInterface;
+
+interface ProviderInterface extends LoggerAwareInterface
 {
     public function createChallengeDnsRecord(string $domain, string $challengeName, string $challengeValue): void;
 
