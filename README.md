@@ -1,3 +1,9 @@
+<p align="center">
+    <a href="https://github.com/roy-bongers/certbot-transip-dns-01-validator/actions?query=branch%3Amaster"><img alt="Workflow status" src="https://img.shields.io/github/workflow/status/roy-bongers/certbot-transip-dns-01-validator/Run%20PHPUnit%20&%20PHPCS%20syle%20check" /></a>
+    <a href="https://github.com/roy-bongers/certbot-transip-dns-01-validator/releases"><img alt="Latest GitHub tag" src="https://img.shields.io/github/v/tag/roy-bongers/certbot-transip-dns-01-validator" /></a>
+    <a href="https://github.com/roy-bongers/certbot-transip-dns-01-validator/blob/master/LICENSE"><img alt="License GPL-3.0" src="https://img.shields.io/github/license/roy-bongers/certbot-transip-dns-01-validator" /></a>
+</p>
+
 # certbot-transip-dns-01-validator
 Certbot DNS-01 validation for wildcard certificates (ACME-v2)
 
