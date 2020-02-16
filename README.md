@@ -21,11 +21,11 @@ Upgrading? See the [upgrade guide](#upgrade-guide).
 
 ## Installation
 * Run `composer install --no-dev`
-* Copy `config/transip.php.example` to `config/transip.php`
+* Copy `config/config.php.example` to `config/config.php`
 * Acquire an API key for TransIP in [your account][4] on their website
-* Edit `config/transip.php` and set your login and private key.
+* Edit `config/config.php` and set your login and private key.
 * Make sure you set the access to this file to only allow your user to read the contents of this file (on linux
- `chmod og-rwx config/transip.php`)
+ `chmod og-rwx config/config.php`)
 
 ## Request a wildcard certificate
 
@@ -52,7 +52,7 @@ There is also a docker container which you can use. You can either bind mount th
 These variables are available: `TRANSIP_LOGIN`, `TRANSIP_PRIVATE_KEY`, `LOGLEVEL`, `LOGFILE`.
 Only the first two variables are required.
 
-For information about values see `config/transip.php.example`. Multiline values (the private key) can be a bit harder
+For information about values see `config/config.php.example`. Multiline values (the private key) can be a bit harder
 to set. Make sure the entire private key is stored in the `TRANSIP_PRIVATE_KEY` variable!
 
 The application runs in the `/opt/certbot-dns-transip` directory and the certificates are created in `/etc/letsencrypt`.
@@ -87,7 +87,7 @@ It probably works fine on other systems and versions of PHP but no guarantees ar
 Version 2.0 is a complete rewrite of the code base and breaks with the original version. Follow these steps to upgrade:
  1. Checkout the latest master branch
  1. Follow the [installation guide](#installation)
- 1. Remove the `Transip` folder after copying your login and private key to `config/transip.php`
+ 1. Remove the `Transip` folder after copying your login and private key to `config/config.php`
  1. You are ready to go!
  
 ## Contributors

@@ -21,7 +21,8 @@
         "ext-xml": "*",
         "transip/transip-api-php": "^5.16",
         "monolog/monolog": "^2.0",
-        "purplepixie/phpdns": "^2.0"
+        "purplepixie/phpdns": "^2.0",
+        "php-di/php-di": "^6.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "3.5.4",

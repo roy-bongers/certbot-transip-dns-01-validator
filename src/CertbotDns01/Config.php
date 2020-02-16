@@ -1,11 +1,11 @@
 <?php
 
-namespace RoyBongers\CertbotTransIpDns01;
+namespace RoyBongers\CertbotDns01;
 
 use Psr\Log\LogLevel;
 use RuntimeException;
 
-class ConfigLoader
+class Config
 {
     private $config = [];
 
@@ -21,7 +21,9 @@ class ConfigLoader
 
     public function __construct()
     {
-        if (file_exists(APP_ROOT . '/config/transip.php')) {
+        if (file_exists(APP_ROOT . '/config/config.php')) {
+            $this->config = include(APP_ROOT . '/config/config.php');
+        } elseif (file_exists(APP_ROOT . '/config/transip.php')) {
             $this->config = include(APP_ROOT . '/config/transip.php');
         }
 

@@ -1,21 +1,16 @@
 <?php
 
-namespace RoyBongers\CertbotTransIpDns01\Certbot;
+namespace RoyBongers\CertbotDns01\Certbot;
 
-use RoyBongers\CertbotTransIpDns01\Certbot\Requests\AuthHookRequest;
-use RoyBongers\CertbotTransIpDns01\Certbot\Requests\CleanupHookRequest;
-use RuntimeException;
 use Monolog\Logger;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
-use Psr\Log\NullLogger;
+use RuntimeException;
+use Psr\Log\LoggerInterface;
 use PurplePixie\PhpDns\DNSQuery;
-use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
+use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
+use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 
-class CertbotDns01 implements LoggerAwareInterface
+class Dns01ManualHookHandler
 {
-    use LoggerAwareTrait;
-
     /** @var int $sleep number of seconds to sleep between nameserver polling rounds */
     private $sleep;
 
@@ -28,15 +23,19 @@ class CertbotDns01 implements LoggerAwareInterface
     /** @var Logger $logger */
     protected $logger;
 
-    public function __construct(ProviderInterface $provider, int $sleep = 30, int $maxTries = 15)
-    {
+    public function __construct(
+        ProviderInterface $provider,
+        LoggerInterface $logger,
+        int $sleep = 30,
+        int $maxTries = 15
+    ) {
         $this->provider = $provider;
-        $this->logger = new NullLogger();
+        $this->logger = $logger;
         $this->sleep = $sleep;
         $this->maxTries = $maxTries;
     }
 
-    public function authHook(AuthHookRequest $request): void
+    public function authHook(ManualHookRequest $request): void
     {
         $domain = $this->getBaseDomain($request->getDomain());
         $subDomain = $this->getSubDomain($domain, $request->getDomain());
@@ -48,7 +47,7 @@ class CertbotDns01 implements LoggerAwareInterface
         $this->waitForNameServers($domain, $challengeName, $challengeValue);
     }
 
-    public function cleanupHook(CleanupHookRequest $request): void
+    public function cleanupHook(ManualHookRequest $request): void
     {
         $domain = $this->getBaseDomain($request->getDomain());
         $subDomain = $this->getSubDomain($domain, $request->getDomain());

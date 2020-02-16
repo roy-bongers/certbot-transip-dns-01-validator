@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'login'       => '',
-    'private_key' => '
+    'transip_login'       => '',
+    'transip_private_key' => '
 -----BEGIN PRIVATE KEY-----
 -----END PRIVATE KEY-----',
 

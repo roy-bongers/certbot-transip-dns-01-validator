@@ -1,28 +1,32 @@
 <?php
 
-namespace RoyBongers\CertbotTransIpDns01\Providers;
+namespace RoyBongers\CertbotDns01\Providers;
 
-use Psr\Log\LoggerAwareTrait;
-use Psr\Log\NullLogger;
 use Psr\Log\LoggerInterface;
+use RoyBongers\CertbotDns01\Config;
 use Transip_DnsEntry;
 use Transip_DomainService;
 use Transip_DnsService;
-use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
+use Transip_ApiSettings;
+use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 
 class TransIp implements ProviderInterface
 {
-    use LoggerAwareTrait;
-
     /** @var LoggerInterface $logger */
-    protected $logger;
+    private $logger;
 
     /** @var array $domainNames */
-    protected $domainNames = [];
+    private $domainNames = [];
 
-    public function __construct()
+    public function __construct(Config $config, LoggerInterface $logger)
     {
-        $this->logger = new NullLogger();
+        $login = $config->get('transip_login', $config->get('login'));
+        $privateKey = $config->get('transip_private_key', $config->get('private_key'));
+
+        Transip_ApiSettings::$login = trim($login);
+        Transip_ApiSettings::$privateKey = trim($privateKey);
+
+        $this->logger = $logger;
     }
 
     public function createChallengeDnsRecord(string $domain, string $challengeName, string $challengeValue): void
@@ -48,7 +52,6 @@ class TransIp implements ProviderInterface
             }
         }
         $dnsEntries = array_values($dnsEntries);
-
         Transip_DnsService::setDnsEntries($domain, $dnsEntries);
     }
 
