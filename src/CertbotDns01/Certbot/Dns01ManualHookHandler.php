@@ -37,25 +37,39 @@ class Dns01ManualHookHandler
 
     public function authHook(ManualHookRequest $request): void
     {
-        $domain = $this->getBaseDomain($request->getDomain());
-        $subDomain = $this->getSubDomain($domain, $request->getDomain());
-        $challengeName = $this->getChallengeName($subDomain);
-        $challengeValue = $request->getChallenge();
+        $challengeRecord = $this->getChallengeRecord($request);
 
-        $this->logger->info(sprintf("Creating TXT record for %s with challenge '%s'", $challengeName, $challengeValue));
-        $this->provider->createChallengeDnsRecord($domain, $challengeName, $challengeValue);
-        $this->waitForNameServers($domain, $challengeName, $challengeValue);
+        $this->logger->info(sprintf(
+            "Creating TXT record for %s with challenge '%s'",
+            $challengeRecord->getChallengeName(),
+            $challengeRecord->getChallengeValue()
+        ));
+
+        $this->provider->createChallengeDnsRecord($challengeRecord);
+        $this->waitForNameServers($challengeRecord);
     }
 
     public function cleanupHook(ManualHookRequest $request): void
+    {
+        $challengeRecord = $this->getChallengeRecord($request);
+
+        $this->logger->info(sprintf(
+            "Cleaning up record %s with value '%s'",
+            $challengeRecord->getChallengeName(),
+            $challengeRecord->getChallengeValue()
+        ));
+
+        $this->provider->cleanChallengeDnsRecord($challengeRecord);
+    }
+
+    private function getChallengeRecord(ManualHookRequest $request): ChallengeRecord
     {
         $domain = $this->getBaseDomain($request->getDomain());
         $subDomain = $this->getSubDomain($domain, $request->getDomain());
         $challengeName = $this->getChallengeName($subDomain);
         $challengeValue = $request->getChallenge();
 
-        $this->logger->info(sprintf("Cleaning up record %s with value '%s'", $challengeName, $challengeValue));
-        $this->provider->cleanChallengeDnsRecord($domain, $challengeName, $challengeValue);
+        return new ChallengeRecord($domain, $challengeName, $challengeValue);
     }
 
     private function getBaseDomain(string $domain): string
@@ -89,12 +103,13 @@ class Dns01ManualHookHandler
      * some time when polling continuously. Therefore we poll every nameserver until all are updated and
      * even then we wait another 30 seconds to be really sure they are all ok.
      */
-    private function waitForNameServers(string $domain, string $challengeRecord, string $challenge): void
+    private function waitForNameServers(ChallengeRecord $challengeRecord): void
     {
         $tries = 0;
         $updatedRecords = 0;
 
-        $nameservers = $this->getNameServers($domain);
+        $dnsRecord = $challengeRecord->getChallengeName() . '.' . $challengeRecord->getDomain();
+        $nameservers = $this->getNameServers($challengeRecord->getDomain());
         $totalNameservers = count($nameservers);
 
         $this->logger->info(sprintf('Waiting until nameservers (%s) are up-to-date', implode(', ', $nameservers)));
@@ -104,7 +119,7 @@ class Dns01ManualHookHandler
 
             // Query each nameserver and make sure the TXT record exists.
             foreach ($nameservers as $index => $nameserver) {
-                if ($this->nameserverIsUpdated($nameserver, $challengeRecord . '.' . $domain, $challenge)) {
+                if ($this->nameserverIsUpdated($nameserver, $dnsRecord, $challengeRecord->getChallengeValue())) {
                     $this->logger->debug(sprintf("Nameserver '%s' is up-to-date", $nameserver));
                     $updatedRecords++;
                 }

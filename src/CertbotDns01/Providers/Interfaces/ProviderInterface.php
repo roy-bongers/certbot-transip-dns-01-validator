@@ -2,11 +2,13 @@
 
 namespace RoyBongers\CertbotDns01\Providers\Interfaces;
 
+use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
+
 interface ProviderInterface
 {
-    public function createChallengeDnsRecord(string $domain, string $challengeName, string $challengeValue): void;
+    public function createChallengeDnsRecord(ChallengeRecord $challengeRecord): void;
 
-    public function cleanChallengeDnsRecord(string $domain, string $challengeName, string $challengeValue): void;
+    public function cleanChallengeDnsRecord(ChallengeRecord $challengeRecord): void;
 
     public function getDomainNames(): array;
 }

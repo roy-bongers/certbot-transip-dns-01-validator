@@ -4,6 +4,7 @@ namespace RoyBongers\CertbotDns01\Tests\Certbot;
 
 use Mockery;
 use Psr\Log\NullLogger;
+use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
 use RuntimeException;
 use PHPUnit\Framework\TestCase;
@@ -13,6 +14,7 @@ use PurplePixie\PhpDns\DNSResult;
 use Symfony\Bridge\PhpUnit\DnsMock;
 use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
+use Hamcrest\Matchers;
 
 class AuthHookTest extends TestCase
 {
@@ -30,11 +32,14 @@ class AuthHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=domain.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->provider->shouldReceive('createChallengeDnsRecord')->withArgs([
+        $expectedChallengeRecord = new ChallengeRecord(
             'domain.com',
             '_acme-challenge',
-            'AfricanOrEuropeanSwallow',
-        ])->once();
+            'AfricanOrEuropeanSwallow'
+        );
+        $this->provider->shouldReceive('createChallengeDnsRecord')
+            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->once();
 
         // mock DNSQuery class
         $dnsAnswer = $this->createDnsAnswer('domain.com', 'AfricanOrEuropeanSwallow');
@@ -51,11 +56,15 @@ class AuthHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=sub.domain.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->provider->shouldReceive('createChallengeDnsRecord')->withArgs([
+        $expectedChallengeRecord = new ChallengeRecord(
             'domain.com',
             '_acme-challenge.sub',
-            'AfricanOrEuropeanSwallow',
-        ])->once();
+            'AfricanOrEuropeanSwallow'
+        );
+
+        $this->provider->shouldReceive('createChallengeDnsRecord')
+            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->once();
 
         // mock DNSQuery class
         $dnsAnswer = $this->createDnsAnswer('sub.domain.com', 'AfricanOrEuropeanSwallow');
@@ -124,22 +133,24 @@ class AuthHookTest extends TestCase
         $this->acme2 = new Dns01ManualHookHandler($this->provider, new NullLogger(), 0, 3);
 
         DnsMock::register(Dns01ManualHookHandler::class);
-        DnsMock::withMockedHosts([
-            'domain.com' => [
-                [
-                    'type'   => 'NS',
-                    'target' => 'ns1.provider.com',
+        DnsMock::withMockedHosts(
+            [
+                'domain.com' => [
+                    [
+                        'type' => 'NS',
+                        'target' => 'ns1.provider.com',
+                    ],
+                    [
+                        'type' => 'NS',
+                        'target' => 'ns2.provider.nl',
+                    ],
+                    [
+                        'type' => 'NS',
+                        'target' => 'ns3.provider.eu',
+                    ],
                 ],
-                [
-                    'type'   => 'NS',
-                    'target' => 'ns2.provider.nl',
-                ],
-                [
-                    'type'   => 'NS',
-                    'target' => 'ns3.provider.eu',
-                ],
-            ],
-        ]);
+            ]
+        );
     }
 
     public function tearDown(): void

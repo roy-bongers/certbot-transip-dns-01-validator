@@ -2,9 +2,11 @@
 
 namespace RoyBongers\CertbotDns01\Tests\Certbot;
 
+use Hamcrest\Matchers;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
@@ -22,11 +24,15 @@ class CleanupHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=domain.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->provider->shouldReceive('cleanChallengeDnsRecord')->withArgs([
+        $expectedChallengeRecord = new ChallengeRecord(
             'domain.com',
             '_acme-challenge',
-            'AfricanOrEuropeanSwallow',
-        ])->once();
+            'AfricanOrEuropeanSwallow'
+        );
+
+        $this->provider->shouldReceive('cleanChallengeDnsRecord')
+            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->once();
 
         $this->expectNotToPerformAssertions();
 
@@ -38,11 +44,15 @@ class CleanupHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=sub.domain.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->provider->shouldReceive('cleanChallengeDnsRecord')->withArgs([
+        $expectedChallengeRecord = new ChallengeRecord(
             'domain.com',
             '_acme-challenge.sub',
-            'AfricanOrEuropeanSwallow',
-        ])->once();
+            'AfricanOrEuropeanSwallow'
+        );
+
+        $this->provider->shouldReceive('cleanChallengeDnsRecord')
+            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->once();
 
         $this->expectNotToPerformAssertions();
 

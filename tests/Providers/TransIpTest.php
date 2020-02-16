@@ -4,6 +4,7 @@ namespace RoyBongers\CertbotDns01\Tests\Providers;
 
 use Mockery;
 use Psr\Log\NullLogger;
+use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Config;
 use Transip_DnsEntry;
 use Transip_DnsService;
@@ -42,7 +43,11 @@ class TransIpTest extends TestCase
             }
         )->once();
 
-        $this->transIp->createChallengeDnsRecord('domain.com', '_acme-challenge', 'AfricanOrEuropeanSwallow');
+        $this->transIp->createChallengeDnsRecord(new ChallengeRecord(
+            'domain.com',
+            '_acme-challenge',
+            'AfricanOrEuropeanSwallow'
+        ));
     }
 
     public function testItCleansChallengeDnsRecord(): void
@@ -66,7 +71,11 @@ class TransIpTest extends TestCase
             }
         )->once();
 
-        $this->transIp->cleanChallengeDnsRecord('domain.com', '_acme-challenge', 'AfricanOrEuropeanSwallow');
+        $this->transIp->cleanChallengeDnsRecord(new ChallengeRecord(
+            'domain.com',
+            '_acme-challenge',
+            'AfricanOrEuropeanSwallow'
+        ));
     }
 
     private function generateDnsRecords(Transip_DnsEntry $additionalDnsEntry = null): array
