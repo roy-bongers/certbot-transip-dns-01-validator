@@ -66,7 +66,7 @@ class Dns01ManualHookHandler
     {
         $domain = $this->getBaseDomain($request->getDomain());
         $subDomain = $this->getSubDomain($domain, $request->getDomain());
-        $challengeName = $this->getChallengeName($subDomain);
+        $challengeName = $this->getRecordName($subDomain);
         $validation = $request->getValidation();
 
         return new ChallengeRecord($domain, $challengeName, $validation);
@@ -176,7 +176,7 @@ class Dns01ManualHookHandler
         return false;
     }
 
-    private function getChallengeName(string $subDomain): string
+    private function getRecordName(string $subDomain): string
     {
         return rtrim('_acme-challenge.' . $subDomain, '.');
     }
