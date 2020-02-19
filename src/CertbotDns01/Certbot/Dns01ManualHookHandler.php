@@ -41,8 +41,8 @@ class Dns01ManualHookHandler
 
         $this->logger->info(sprintf(
             "Creating TXT record for %s with challenge '%s'",
-            $challengeRecord->getChallengeName(),
-            $challengeRecord->getChallengeValue()
+            $challengeRecord->getRecordName(),
+            $challengeRecord->getValidation()
         ));
 
         $this->provider->createChallengeDnsRecord($challengeRecord);
@@ -55,8 +55,8 @@ class Dns01ManualHookHandler
 
         $this->logger->info(sprintf(
             "Cleaning up record %s with value '%s'",
-            $challengeRecord->getChallengeName(),
-            $challengeRecord->getChallengeValue()
+            $challengeRecord->getRecordName(),
+            $challengeRecord->getValidation()
         ));
 
         $this->provider->cleanChallengeDnsRecord($challengeRecord);
@@ -67,9 +67,9 @@ class Dns01ManualHookHandler
         $domain = $this->getBaseDomain($request->getDomain());
         $subDomain = $this->getSubDomain($domain, $request->getDomain());
         $challengeName = $this->getChallengeName($subDomain);
-        $challengeValue = $request->getChallenge();
+        $validation = $request->getValidation();
 
-        return new ChallengeRecord($domain, $challengeName, $challengeValue);
+        return new ChallengeRecord($domain, $challengeName, $validation);
     }
 
     private function getBaseDomain(string $domain): string
@@ -108,7 +108,7 @@ class Dns01ManualHookHandler
         $tries = 0;
         $updatedRecords = 0;
 
-        $dnsRecord = $challengeRecord->getChallengeName() . '.' . $challengeRecord->getDomain();
+        $dnsRecord = $challengeRecord->getRecordName() . '.' . $challengeRecord->getDomain();
         $nameservers = $this->getNameServers($challengeRecord->getDomain());
         $totalNameservers = count($nameservers);
 
@@ -119,7 +119,7 @@ class Dns01ManualHookHandler
 
             // Query each nameserver and make sure the TXT record exists.
             foreach ($nameservers as $index => $nameserver) {
-                if ($this->nameserverIsUpdated($nameserver, $dnsRecord, $challengeRecord->getChallengeValue())) {
+                if ($this->nameserverIsUpdated($nameserver, $dnsRecord, $challengeRecord->getValidation())) {
                     $this->logger->debug(sprintf("Nameserver '%s' is up-to-date", $nameserver));
                     $updatedRecords++;
                 }
@@ -150,7 +150,7 @@ class Dns01ManualHookHandler
         }
     }
 
-    private function nameserverIsUpdated(string $nameserver, string $record, string $challenge): bool
+    private function nameserverIsUpdated(string $nameserver, string $record, string $validation): bool
     {
         $dnsQuery = new DNSQuery($nameserver);
         $dnsResults = $dnsQuery->Query($record, 'TXT');
@@ -168,7 +168,7 @@ class Dns01ManualHookHandler
 
         foreach ($dnsResults as $dnsResult) {
             $this->logger->debug(sprintf('DNS result: %s', $dnsResult->getData()));
-            if ($dnsResult->getData() === $challenge) {
+            if ($dnsResult->getData() === $validation) {
                 return true;
             }
         }

@@ -4,7 +4,7 @@ namespace RoyBongers\CertbotDns01\Certbot\Requests;
 
 class ManualHookRequest
 {
-    public function getChallenge(): string
+    public function getValidation(): string
     {
         return getenv('CERTBOT_VALIDATION');
     }
