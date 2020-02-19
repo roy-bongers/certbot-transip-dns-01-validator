@@ -35,14 +35,13 @@ class TransIp implements ProviderInterface
         $dnsEntries = $this->getDnsEntries($challengeRecord->getDomain());
 
         $challengeDnsEntry = new Transip_DnsEntry(
-            $challengeRecord->getChallengeName(),
+            $challengeRecord->getRecordName(),
             60,
             Transip_DnsEntry::TYPE_TXT,
-            $challengeRecord->getChallengeValue()
+            $challengeRecord->getValidation()
         );
 
         array_push($dnsEntries, $challengeDnsEntry);
-
         Transip_DnsService::setDnsEntries($challengeRecord->getDomain(), $dnsEntries);
     }
 
@@ -51,8 +50,8 @@ class TransIp implements ProviderInterface
         $dnsEntries = $this->getDnsEntries($challengeRecord->getDomain());
 
         foreach ($dnsEntries as $index => $dnsEntry) {
-            if ($dnsEntry->name === $challengeRecord->getChallengeName() &&
-                $dnsEntry->content === $challengeRecord->getChallengeValue()
+            if ($dnsEntry->name === $challengeRecord->getRecordName() &&
+                $dnsEntry->content === $challengeRecord->getValidation()
             ) {
                 $this->logger->debug(
                     sprintf('Removing challenge DNS record(%s 60 TXT %s)', $dnsEntry->name, $dnsEntry->content)
