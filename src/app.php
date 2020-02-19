@@ -26,7 +26,7 @@ $builder->addDefinitions(
         Config::class => DI\autowire(),
         ProviderInterface::class => DI\factory(
             function (ContainerInterface $container, Config $config) {
-                $provider = strtolower($config->get('provider'));
+                $provider = strtolower($config->get('provider', 'transip'));
                 if (!$container->has($provider)) {
                     throw new ProviderNotFoundException($provider);
                 }
@@ -36,7 +36,7 @@ $builder->addDefinitions(
         ),
         LoggerInterface::class => DI\factory(
             function (Config $config) {
-                $loglevel = $config->get('loglevel');
+                $loglevel = $config->get('loglevel', LogLevel::INFO);
                 $logfile = $config->get('logfile');
 
                 $outputFormat = "[%datetime%] %level_name%: %message% %context% %extra%\n";
