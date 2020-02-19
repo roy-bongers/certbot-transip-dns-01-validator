@@ -1,6 +1,7 @@
 <?php
 
 use Monolog\Logger;
+use Psr\Log\LogLevel;
 use DI\ContainerBuilder;
 use Psr\Log\LoggerInterface;
 use Monolog\Handler\StreamHandler;
@@ -9,6 +10,7 @@ use Psr\Container\ContainerInterface;
 use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\TransIp;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
+use RoyBongers\CertbotDns01\Providers\Exceptions\ProviderNotFoundException;
 
 // define all available providers
 $providers = [
@@ -18,31 +20,34 @@ $providers = [
 // build dependency injection container
 $builder = new ContainerBuilder();
 $builder->useAnnotations(false);
-$builder->addDefinitions(
-    array_map(
-        function ($class) {
-            return DI\get($class);
-        },
-        $providers
-    )
-);
+$builder->addDefinitions(array_map('DI\get', $providers));
 $builder->addDefinitions(
     [
+        Config::class => DI\autowire(),
         ProviderInterface::class => DI\factory(
             function (ContainerInterface $container, Config $config) {
-                return $container->get($config->get('provider'));
+                $provider = strtolower($config->get('provider'));
+                if (!$container->has($provider)) {
+                    throw new ProviderNotFoundException($provider);
+                }
+
+                return $container->get($provider);
             }
         ),
         LoggerInterface::class => DI\factory(
             function (Config $config) {
-                $output = '[%datetime%] %level_name%: %message%' . PHP_EOL;
-                $formatter = new LineFormatter($output, 'Y-m-d H:i:s.u');
-
                 $loglevel = $config->get('loglevel');
                 $logfile = $config->get('logfile');
 
+                $outputFormat = "[%datetime%] %level_name%: %message% %context% %extra%\n";
+                $formatter = new LineFormatter($outputFormat, 'Y-m-d H:i:s.u');
+                if ($loglevel === LogLevel::DEBUG) {
+                    $formatter->includeStacktraces();
+                }
+
                 $handlers = [
                     (new StreamHandler('php://stdout', $loglevel))->setFormatter($formatter),
+                    (new StreamHandler('php://stderr', LogLevel::ERROR))->setFormatter($formatter),
                 ];
                 if ($logfile !== null) {
                     $handlers[] = (new StreamHandler($logfile, $loglevel))->setFormatter($formatter);
@@ -57,3 +62,4 @@ $builder->addDefinitions(
     ]
 );
 $container = $builder->build();
+$logger = $container->get(LoggerInterface::class);
