@@ -21,15 +21,20 @@ class TransIp implements ProviderInterface
 
     public function __construct(Config $config, LoggerInterface $logger)
     {
+        $this->logger = $logger;
+
         $login = $config->get('transip_login', $config->get('login'));
         $privateKey = $config->get('transip_private_key', $config->get('private_key'));
 
         Transip_ApiSettings::$login = trim($login);
         Transip_ApiSettings::$privateKey = trim($privateKey);
-
-        $this->logger = $logger;
     }
 
+    /**
+     * Create a TXT DNS record via the provider's API.
+     *
+     * @param  ChallengeRecord  $challengeRecord
+     */
     public function createChallengeDnsRecord(ChallengeRecord $challengeRecord): void
     {
         $dnsEntries = $this->getDnsEntries($challengeRecord->getDomain());
@@ -45,6 +50,11 @@ class TransIp implements ProviderInterface
         Transip_DnsService::setDnsEntries($challengeRecord->getDomain(), $dnsEntries);
     }
 
+    /**
+     * Remove the created TXT record via the provider's API.
+     *
+     * @param  ChallengeRecord  $challengeRecord
+     */
     public function cleanChallengeDnsRecord(ChallengeRecord $challengeRecord): void
     {
         $dnsEntries = $this->getDnsEntries($challengeRecord->getDomain());
@@ -63,7 +73,12 @@ class TransIp implements ProviderInterface
         Transip_DnsService::setDnsEntries($challengeRecord->getDomain(), $dnsEntries);
     }
 
-    public function getDomainNames(): array
+    /**
+     * Return a simple array containing the domain names that can be managed via the API.
+     *
+     * @return iterable
+     */
+    public function getDomainNames(): iterable
     {
         if (empty($this->domainNames)) {
             $this->domainNames = Transip_DomainService::getDomainNames();

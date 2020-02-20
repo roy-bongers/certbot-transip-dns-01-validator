@@ -35,6 +35,11 @@ class Dns01ManualHookHandler
         $this->maxTries = $maxTries;
     }
 
+    /**
+     * Perform the manual auth hook.
+     *
+     * @param  ManualHookRequest  $request
+     */
     public function authHook(ManualHookRequest $request): void
     {
         $challengeRecord = $this->getChallengeRecord($request);
@@ -49,6 +54,11 @@ class Dns01ManualHookHandler
         $this->waitForNameServers($challengeRecord);
     }
 
+    /**
+     * Perform the manual cleanup hook.
+     *
+     * @param  ManualHookRequest  $request
+     */
     public function cleanupHook(ManualHookRequest $request): void
     {
         $challengeRecord = $this->getChallengeRecord($request);
@@ -62,6 +72,12 @@ class Dns01ManualHookHandler
         $this->provider->cleanChallengeDnsRecord($challengeRecord);
     }
 
+    /**
+     * Returns an ChallengeRecord instance which has all properties needed to perform the validation.
+     *
+     * @param  ManualHookRequest  $request
+     * @return ChallengeRecord
+     */
     private function getChallengeRecord(ManualHookRequest $request): ChallengeRecord
     {
         $domain = $this->getBaseDomain($request->getDomain());
@@ -72,6 +88,14 @@ class Dns01ManualHookHandler
         return new ChallengeRecord($domain, $challengeName, $validation);
     }
 
+    /**
+     * Search for the primary domain (zone) where the DNS records are stored. It loops through a list of options
+     * starting with the full domain including subdomains. If that domain can't be managed by the provider a
+     * subdomain part is stripped of and we search again.
+     *
+     * @param  string  $domain
+     * @return string
+     */
     private function getBaseDomain(string $domain): string
     {
         $domainGuesses = $this->getDomainGuesses($domain);
@@ -87,6 +111,12 @@ class Dns01ManualHookHandler
         throw new RuntimeException(sprintf('Can\'t manage DNS for given domain (%s).', reset($domainGuesses)));
     }
 
+    /**
+     * Return a list of domain names that we can use to search for the primary domain.
+     *
+     * @param  string  $fullyQualifiedDomainName
+     * @return array
+     */
     private function getDomainGuesses(string $fullyQualifiedDomainName): array
     {
         $guesses = [];
@@ -102,22 +132,25 @@ class Dns01ManualHookHandler
      * For some reason when a nameserver is just updated the new record appears and disappears again for
      * some time when polling continuously. Therefore we poll every nameserver until all are updated and
      * even then we wait another 30 seconds to be really sure they are all ok.
+     *
+     * @param ChallengeRecord $challengeRecord
      */
     private function waitForNameServers(ChallengeRecord $challengeRecord): void
     {
         $tries = 0;
         $updatedRecords = 0;
 
-        $dnsRecord = $challengeRecord->getRecordName() . '.' . $challengeRecord->getDomain();
+        $dnsRecord = $challengeRecord->getFullRecordName();
         $nameservers = $this->getNameServers($challengeRecord->getDomain());
         $totalNameservers = count($nameservers);
 
         $this->logger->info(sprintf('Waiting until nameservers (%s) are up-to-date', implode(', ', $nameservers)));
 
+        // keep looping until all nameservers are updated.
         while ($updatedRecords < $totalNameservers) {
             $updatedRecords = 0;
 
-            // Query each nameserver and make sure the TXT record exists.
+            // query each nameserver and make sure the TXT record exists.
             foreach ($nameservers as $index => $nameserver) {
                 if ($this->nameserverIsUpdated($nameserver, $dnsRecord, $challengeRecord->getValidation())) {
                     $this->logger->debug(sprintf("Nameserver '%s' is up-to-date", $nameserver));
@@ -150,6 +183,14 @@ class Dns01ManualHookHandler
         }
     }
 
+    /**
+     * Perform a DNS query and check of the nameserver already has the up-to-date record.
+     *
+     * @param  string  $nameserver
+     * @param  string  $record
+     * @param  string  $validation
+     * @return bool
+     */
     private function nameserverIsUpdated(string $nameserver, string $record, string $validation): bool
     {
         $dnsQuery = new DNSQuery($nameserver);
