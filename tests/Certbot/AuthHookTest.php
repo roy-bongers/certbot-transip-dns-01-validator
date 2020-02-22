@@ -1,21 +1,24 @@
 <?php
 
-namespace RoyBongers\CertbotTransIpDns01\Tests\Certbot;
+namespace RoyBongers\CertbotDns01\Tests\Certbot;
 
 use Mockery;
+use Psr\Log\NullLogger;
+use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
+use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
 use RuntimeException;
 use PHPUnit\Framework\TestCase;
 use PurplePixie\PhpDns\DNSQuery;
 use PurplePixie\PhpDns\DNSAnswer;
 use PurplePixie\PhpDns\DNSResult;
 use Symfony\Bridge\PhpUnit\DnsMock;
-use RoyBongers\CertbotTransIpDns01\Certbot\CertbotDns01;
-use RoyBongers\CertbotTransIpDns01\Certbot\Requests\AuthHookRequest;
-use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
+use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
+use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
+use Hamcrest\Matchers;
 
 class AuthHookTest extends TestCase
 {
-    /** @var CertbotDns01 $acme2 */
+    /** @var Dns01ManualHookHandler $acme2 */
     private $acme2;
 
     /** @var ProviderInterface $provider */
@@ -29,11 +32,14 @@ class AuthHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=domain.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->provider->shouldReceive('createChallengeDnsRecord')->withArgs([
+        $expectedChallengeRecord = new ChallengeRecord(
             'domain.com',
             '_acme-challenge',
-            'AfricanOrEuropeanSwallow',
-        ])->once();
+            'AfricanOrEuropeanSwallow'
+        );
+        $this->provider->shouldReceive('createChallengeDnsRecord')
+            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->once();
 
         // mock DNSQuery class
         $dnsAnswer = $this->createDnsAnswer('domain.com', 'AfricanOrEuropeanSwallow');
@@ -42,7 +48,7 @@ class AuthHookTest extends TestCase
 
         $this->expectNotToPerformAssertions();
 
-        $this->acme2->authHook(new AuthHookRequest());
+        $this->acme2->authHook(new ManualHookRequest());
     }
 
     public function testAuthHookWithSubDomain(): void
@@ -50,11 +56,15 @@ class AuthHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=sub.domain.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->provider->shouldReceive('createChallengeDnsRecord')->withArgs([
+        $expectedChallengeRecord = new ChallengeRecord(
             'domain.com',
             '_acme-challenge.sub',
-            'AfricanOrEuropeanSwallow',
-        ])->once();
+            'AfricanOrEuropeanSwallow'
+        );
+
+        $this->provider->shouldReceive('createChallengeDnsRecord')
+            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->once();
 
         // mock DNSQuery class
         $dnsAnswer = $this->createDnsAnswer('sub.domain.com', 'AfricanOrEuropeanSwallow');
@@ -63,7 +73,7 @@ class AuthHookTest extends TestCase
 
         $this->expectNotToPerformAssertions();
 
-        $this->acme2->authHook(new AuthHookRequest());
+        $this->acme2->authHook(new ManualHookRequest());
     }
 
     public function testItThrowsRuntimeExceptionWithUnmanageableDomain(): void
@@ -73,7 +83,7 @@ class AuthHookTest extends TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $this->acme2->authHook(new AuthHookRequest());
+        $this->acme2->authHook(new ManualHookRequest());
     }
 
     public function testItThrowsRuntimeExceptionWhenQueryingNameserversTimeouts(): void
@@ -90,7 +100,7 @@ class AuthHookTest extends TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $this->acme2->authHook(new AuthHookRequest());
+        $this->acme2->authHook(new ManualHookRequest());
     }
 
     private function createDnsAnswer(string $domain, string $data): DNSAnswer
@@ -120,25 +130,27 @@ class AuthHookTest extends TestCase
 
         $this->dnsQuery = Mockery::mock('overload:' . DNSQuery::class);
 
-        $this->acme2 = new CertbotDns01($this->provider, 0, 3);
+        $this->acme2 = new Dns01ManualHookHandler($this->provider, new NullLogger(), 0, 3);
 
-        DnsMock::register(CertbotDns01::class);
-        DnsMock::withMockedHosts([
-            'domain.com' => [
-                [
-                    'type'   => 'NS',
-                    'target' => 'ns1.provider.com',
+        DnsMock::register(Dns01ManualHookHandler::class);
+        DnsMock::withMockedHosts(
+            [
+                'domain.com' => [
+                    [
+                        'type' => 'NS',
+                        'target' => 'ns1.provider.com',
+                    ],
+                    [
+                        'type' => 'NS',
+                        'target' => 'ns2.provider.nl',
+                    ],
+                    [
+                        'type' => 'NS',
+                        'target' => 'ns3.provider.eu',
+                    ],
                 ],
-                [
-                    'type'   => 'NS',
-                    'target' => 'ns2.provider.nl',
-                ],
-                [
-                    'type'   => 'NS',
-                    'target' => 'ns3.provider.eu',
-                ],
-            ],
-        ]);
+            ]
+        );
     }
 
     public function tearDown(): void

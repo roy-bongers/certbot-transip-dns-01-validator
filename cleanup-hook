@@ -4,8 +4,15 @@ declare(strict_types = 1);
 
 define('APP_ROOT', __DIR__);
 require_once(APP_ROOT.'/vendor/autoload.php');
+require_once(APP_ROOT . '/src/app.php');
 
-use RoyBongers\CertbotTransIpDns01\Bootstrap;
-use RoyBongers\CertbotTransIpDns01\Certbot\Requests\CleanupHookRequest;
+use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
+use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
 
-(new Bootstrap(new CleanupHookRequest()));
+try {
+    $hookHandler = $container->get(Dns01ManualHookHandler::class);
+    $hookHandler->cleanupHook(new ManualHookRequest());
+}
+catch (Exception $exception) {
+    $logger->error($exception->getMessage(), ['exception' => $exception]);
+}

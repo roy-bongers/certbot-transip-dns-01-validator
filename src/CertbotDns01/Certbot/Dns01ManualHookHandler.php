@@ -1,21 +1,16 @@
 <?php
 
-namespace RoyBongers\CertbotTransIpDns01\Certbot;
+namespace RoyBongers\CertbotDns01\Certbot;
 
-use RoyBongers\CertbotTransIpDns01\Certbot\Requests\AuthHookRequest;
-use RoyBongers\CertbotTransIpDns01\Certbot\Requests\CleanupHookRequest;
-use RuntimeException;
 use Monolog\Logger;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
-use Psr\Log\NullLogger;
+use RuntimeException;
+use Psr\Log\LoggerInterface;
 use PurplePixie\PhpDns\DNSQuery;
-use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
+use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
+use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 
-class CertbotDns01 implements LoggerAwareInterface
+class Dns01ManualHookHandler
 {
-    use LoggerAwareTrait;
-
     /** @var int $sleep number of seconds to sleep between nameserver polling rounds */
     private $sleep;
 
@@ -28,37 +23,79 @@ class CertbotDns01 implements LoggerAwareInterface
     /** @var Logger $logger */
     protected $logger;
 
-    public function __construct(ProviderInterface $provider, int $sleep = 30, int $maxTries = 15)
-    {
+    public function __construct(
+        ProviderInterface $provider,
+        LoggerInterface $logger,
+        int $sleep = 30,
+        int $maxTries = 15
+    ) {
         $this->provider = $provider;
-        $this->logger = new NullLogger();
+        $this->logger = $logger;
         $this->sleep = $sleep;
         $this->maxTries = $maxTries;
     }
 
-    public function authHook(AuthHookRequest $request): void
+    /**
+     * Perform the manual auth hook.
+     *
+     * @param  ManualHookRequest  $request
+     */
+    public function authHook(ManualHookRequest $request): void
+    {
+        $challengeRecord = $this->getChallengeRecord($request);
+
+        $this->logger->info(sprintf(
+            "Creating TXT record for %s with challenge '%s'",
+            $challengeRecord->getRecordName(),
+            $challengeRecord->getValidation()
+        ));
+
+        $this->provider->createChallengeDnsRecord($challengeRecord);
+        $this->waitForNameServers($challengeRecord);
+    }
+
+    /**
+     * Perform the manual cleanup hook.
+     *
+     * @param  ManualHookRequest  $request
+     */
+    public function cleanupHook(ManualHookRequest $request): void
+    {
+        $challengeRecord = $this->getChallengeRecord($request);
+
+        $this->logger->info(sprintf(
+            "Cleaning up record %s with value '%s'",
+            $challengeRecord->getRecordName(),
+            $challengeRecord->getValidation()
+        ));
+
+        $this->provider->cleanChallengeDnsRecord($challengeRecord);
+    }
+
+    /**
+     * Returns an ChallengeRecord instance which has all properties needed to perform the validation.
+     *
+     * @param  ManualHookRequest  $request
+     * @return ChallengeRecord
+     */
+    private function getChallengeRecord(ManualHookRequest $request): ChallengeRecord
     {
         $domain = $this->getBaseDomain($request->getDomain());
         $subDomain = $this->getSubDomain($domain, $request->getDomain());
-        $challengeName = $this->getChallengeName($subDomain);
-        $challengeValue = $request->getChallenge();
+        $challengeName = $this->getRecordName($subDomain);
+        $validation = $request->getValidation();
 
-        $this->logger->info(sprintf("Creating TXT record for %s with challenge '%s'", $challengeName, $challengeValue));
-        $this->provider->createChallengeDnsRecord($domain, $challengeName, $challengeValue);
-        $this->waitForNameServers($domain, $challengeName, $challengeValue);
+        return new ChallengeRecord($domain, $challengeName, $validation);
     }
 
-    public function cleanupHook(CleanupHookRequest $request): void
-    {
-        $domain = $this->getBaseDomain($request->getDomain());
-        $subDomain = $this->getSubDomain($domain, $request->getDomain());
-        $challengeName = $this->getChallengeName($subDomain);
-        $challengeValue = $request->getChallenge();
-
-        $this->logger->info(sprintf("Cleaning up record %s with value '%s'", $challengeName, $challengeValue));
-        $this->provider->cleanChallengeDnsRecord($domain, $challengeName, $challengeValue);
-    }
-
+    /**
+     * Search for the primary domain (zone) where the DNS records are stored. It loops through a list of options
+     * starting with the full domain including subdomains. If that domain can't be managed by the provider a
+     * subdomain part is stripped of and we search again.
+     *
+     * @param  string  $domain
+     * @return string
+     */
     private function getBaseDomain(string $domain): string
     {
         $domainGuesses = $this->getDomainGuesses($domain);
@@ -74,6 +111,12 @@ class CertbotDns01 implements LoggerAwareInterface
         throw new RuntimeException(sprintf('Can\'t manage DNS for given domain (%s).', reset($domainGuesses)));
     }
 
+    /**
+     * Return a list of domain names that we can use to search for the primary domain.
+     *
+     * @param  string  $fullyQualifiedDomainName
+     * @return array
+     */
     private function getDomainGuesses(string $fullyQualifiedDomainName): array
     {
         $guesses = [];
@@ -89,23 +132,27 @@ class CertbotDns01 implements LoggerAwareInterface
      * For some reason when a nameserver is just updated the new record appears and disappears again for
      * some time when polling continuously. Therefore we poll every nameserver until all are updated and
      * even then we wait another 30 seconds to be really sure they are all ok.
+     *
+     * @param ChallengeRecord $challengeRecord
      */
-    private function waitForNameServers(string $domain, string $challengeRecord, string $challenge): void
+    private function waitForNameServers(ChallengeRecord $challengeRecord): void
     {
         $tries = 0;
         $updatedRecords = 0;
 
-        $nameservers = $this->getNameServers($domain);
+        $dnsRecord = $challengeRecord->getFullRecordName();
+        $nameservers = $this->getNameServers($challengeRecord->getDomain());
         $totalNameservers = count($nameservers);
 
         $this->logger->info(sprintf('Waiting until nameservers (%s) are up-to-date', implode(', ', $nameservers)));
 
+        // keep looping until all nameservers are updated.
         while ($updatedRecords < $totalNameservers) {
             $updatedRecords = 0;
 
-            // Query each nameserver and make sure the TXT record exists.
+            // query each nameserver and make sure the TXT record exists.
             foreach ($nameservers as $index => $nameserver) {
-                if ($this->nameserverIsUpdated($nameserver, $challengeRecord . '.' . $domain, $challenge)) {
+                if ($this->nameserverIsUpdated($nameserver, $dnsRecord, $challengeRecord->getValidation())) {
                     $this->logger->debug(sprintf("Nameserver '%s' is up-to-date", $nameserver));
                     $updatedRecords++;
                 }
@@ -136,7 +183,15 @@ class CertbotDns01 implements LoggerAwareInterface
         }
     }
 
-    private function nameserverIsUpdated(string $nameserver, string $record, string $challenge): bool
+    /**
+     * Perform a DNS query and check of the nameserver already has the up-to-date record.
+     *
+     * @param  string  $nameserver
+     * @param  string  $record
+     * @param  string  $validation
+     * @return bool
+     */
+    private function nameserverIsUpdated(string $nameserver, string $record, string $validation): bool
     {
         $dnsQuery = new DNSQuery($nameserver);
         $dnsResults = $dnsQuery->Query($record, 'TXT');
@@ -154,7 +209,7 @@ class CertbotDns01 implements LoggerAwareInterface
 
         foreach ($dnsResults as $dnsResult) {
             $this->logger->debug(sprintf('DNS result: %s', $dnsResult->getData()));
-            if ($dnsResult->getData() === $challenge) {
+            if ($dnsResult->getData() === $validation) {
                 return true;
             }
         }
@@ -162,7 +217,7 @@ class CertbotDns01 implements LoggerAwareInterface
         return false;
     }
 
-    private function getChallengeName(string $subDomain): string
+    private function getRecordName(string $subDomain): string
     {
         return rtrim('_acme-challenge.' . $subDomain, '.');
     }

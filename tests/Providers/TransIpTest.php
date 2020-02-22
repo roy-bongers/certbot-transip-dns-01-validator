@@ -1,13 +1,16 @@
 <?php
 
-namespace RoyBongers\CertbotTransIpDns01\Tests\Providers;
+namespace RoyBongers\CertbotDns01\Tests\Providers;
 
 use Mockery;
+use Psr\Log\NullLogger;
+use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
+use RoyBongers\CertbotDns01\Config;
 use Transip_DnsEntry;
 use Transip_DnsService;
 use Transip_DomainService;
 use PHPUnit\Framework\TestCase;
-use RoyBongers\CertbotTransIpDns01\Providers\TransIp;
+use RoyBongers\CertbotDns01\Providers\TransIp;
 
 class TransIpTest extends TestCase
 {
@@ -40,7 +43,11 @@ class TransIpTest extends TestCase
             }
         )->once();
 
-        $this->transIp->createChallengeDnsRecord('domain.com', '_acme-challenge', 'AfricanOrEuropeanSwallow');
+        $this->transIp->createChallengeDnsRecord(new ChallengeRecord(
+            'domain.com',
+            '_acme-challenge',
+            'AfricanOrEuropeanSwallow'
+        ));
     }
 
     public function testItCleansChallengeDnsRecord(): void
@@ -64,7 +71,11 @@ class TransIpTest extends TestCase
             }
         )->once();
 
-        $this->transIp->cleanChallengeDnsRecord('domain.com', '_acme-challenge', 'AfricanOrEuropeanSwallow');
+        $this->transIp->cleanChallengeDnsRecord(new ChallengeRecord(
+            'domain.com',
+            '_acme-challenge',
+            'AfricanOrEuropeanSwallow'
+        ));
     }
 
     private function generateDnsRecords(Transip_DnsEntry $additionalDnsEntry = null): array
@@ -91,7 +102,10 @@ class TransIpTest extends TestCase
     {
         parent::setUp();
 
-        $this->transIp = new TransIp();
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('get')->andReturn('test');
+
+        $this->transIp = new TransIp($config, new NullLogger());
         $this->dnsService = Mockery::mock('overload:' . Transip_DnsService::class);
         $this->domainService = Mockery::mock('overload:' . Transip_DomainService::class);
     }

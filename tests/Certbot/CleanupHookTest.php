@@ -1,17 +1,20 @@
 <?php
 
-namespace RoyBongers\CertbotTransIpDns01\Tests\Certbot;
+namespace RoyBongers\CertbotDns01\Tests\Certbot;
 
+use Hamcrest\Matchers;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use RoyBongers\CertbotTransIpDns01\Certbot\CertbotDns01;
-use RoyBongers\CertbotTransIpDns01\Certbot\Requests\CleanupHookRequest;
-use RoyBongers\CertbotTransIpDns01\Providers\Interfaces\ProviderInterface;
+use Psr\Log\NullLogger;
+use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
+use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
+use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
+use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 
 class CleanupHookTest extends TestCase
 {
-    /** @var CertbotDns01 $acme2 */
-    private $acme2;
+    /** @var Dns01ManualHookHandler $hookHandler */
+    private $hookHandler;
 
     /** @var ProviderInterface $provider */
     private $provider;
@@ -21,15 +24,19 @@ class CleanupHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=domain.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->provider->shouldReceive('cleanChallengeDnsRecord')->withArgs([
+        $expectedChallengeRecord = new ChallengeRecord(
             'domain.com',
             '_acme-challenge',
-            'AfricanOrEuropeanSwallow',
-        ])->once();
+            'AfricanOrEuropeanSwallow'
+        );
+
+        $this->provider->shouldReceive('cleanChallengeDnsRecord')
+            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->once();
 
         $this->expectNotToPerformAssertions();
 
-        $this->acme2->cleanupHook(new CleanupHookRequest());
+        $this->hookHandler->cleanupHook(new ManualHookRequest());
     }
 
     public function testCleanupHookWithSubDomain(): void
@@ -37,15 +44,19 @@ class CleanupHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=sub.domain.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->provider->shouldReceive('cleanChallengeDnsRecord')->withArgs([
+        $expectedChallengeRecord = new ChallengeRecord(
             'domain.com',
             '_acme-challenge.sub',
-            'AfricanOrEuropeanSwallow',
-        ])->once();
+            'AfricanOrEuropeanSwallow'
+        );
+
+        $this->provider->shouldReceive('cleanChallengeDnsRecord')
+            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->once();
 
         $this->expectNotToPerformAssertions();
 
-        $this->acme2->cleanupHook(new CleanupHookRequest());
+        $this->hookHandler->cleanupHook(new ManualHookRequest());
     }
 
     public function testItThrowsRuntimeExceptionWithUnmanageableDomain(): void
@@ -55,7 +66,7 @@ class CleanupHookTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
 
-        $this->acme2->cleanupHook(new CleanupHookRequest());
+        $this->hookHandler->cleanupHook(new ManualHookRequest());
     }
 
     public function setUp(): void
@@ -65,7 +76,7 @@ class CleanupHookTest extends TestCase
         $this->provider = Mockery::mock(ProviderInterface::class);
         $this->provider->shouldReceive('getDomainNames')->andReturn(['domain.com', 'transip.nl']);
 
-        $this->acme2 = new CertbotDns01($this->provider);
+        $this->hookHandler = new Dns01ManualHookHandler($this->provider, new NullLogger());
     }
 
     public function tearDown(): void

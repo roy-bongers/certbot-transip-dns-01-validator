@@ -1,4 +1,4 @@
-config/transip.php
+config/config.php
 vendor/
 logs/*
 !logs/.gitkeep
