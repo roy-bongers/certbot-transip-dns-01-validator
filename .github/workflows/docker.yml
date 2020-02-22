@@ -6,7 +6,7 @@ on:
       - master
       - develop
     tags:
-      - v2.*
+      - v*.*.*
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Publish to Docker Hub
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: roy-bongers/Publish-Docker-Github-Action@master
         with:
           name: rbongers/certbot-dns-transip
           username: ${{ secrets.DOCKER_USERNAME }}
