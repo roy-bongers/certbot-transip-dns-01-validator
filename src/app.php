@@ -9,12 +9,14 @@ use Monolog\Formatter\LineFormatter;
 use Psr\Container\ContainerInterface;
 use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\TransIp;
+use RoyBongers\CertbotDns01\Providers\OpenProvider;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 use RoyBongers\CertbotDns01\Providers\Exceptions\ProviderNotFoundException;
 
 // define all available providers
 $providers = [
     'transip' => TransIp::class,
+    'openprovider' => OpenProvider::class,
 ];
 
 // build dependency injection container

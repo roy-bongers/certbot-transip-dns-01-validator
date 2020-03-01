@@ -19,10 +19,13 @@
         "php": "^7.1",
         "ext-soap": "*",
         "ext-xml": "*",
+        "ext-simplexml": "*",
+        "ext-json": "*",
         "transip/transip-api-php": "^5.16",
         "monolog/monolog": "^2.0",
         "purplepixie/phpdns": "^2.0",
-        "php-di/php-di": "^6.0"
+        "php-di/php-di": "^6.0",
+        "guzzlehttp/guzzle": "^6.5"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "3.5.4",
