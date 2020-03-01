@@ -6,6 +6,11 @@ return [
 -----BEGIN PRIVATE KEY-----
 -----END PRIVATE KEY-----',
 
+    'openprovider_username' => '',
+    'openprovider_hash' => '',
+
+    'provider' => 'transip',
+
     'logfile'     => 'logs/certbot-transip.log',
     'loglevel'    => 'info', // options: debug, info, error
 ];
