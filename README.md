@@ -15,7 +15,7 @@ automatically.
 ## Requirements
 Version 2 has the following requirements. If you use older PHP versions you have to use the latest 1.x release.
 Upgrading? See the [upgrade guide](#upgrade-guide).
-* PHP 7.2 with XML and SOAP extensions enabled
+* PHP >= 7.2.0 with JSON and OpenSSL extensions enabled
 * [Certbot][2] >= v0.22
 * The [composer][3] package manager
 
