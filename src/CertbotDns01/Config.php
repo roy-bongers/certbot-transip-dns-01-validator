@@ -36,11 +36,4 @@ class Config
 
         return $default;
     }
-
-    public function set(string $key, $value): self
-    {
-        $this->config[$key] = $value;
-
-        return $this;
-    }
 }

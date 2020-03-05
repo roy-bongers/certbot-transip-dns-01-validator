@@ -98,8 +98,8 @@ class TransIp implements ProviderInterface
 
         $login = $this->config->get('transip_login', $this->config->get('login'));
         $privateKey = $this->config->get('transip_private_key', $this->config->get('private_key'));
-        $onlyWhitelistedIps = (bool) $this->config->get('transip_whitelisted_ip_only', true);
+        $generateWhitelistOnlyTokens = (bool) $this->config->get('transip_whitelist_only_token', true);
 
-        return new TransipAPI($login, $privateKey, $onlyWhitelistedIps);
+        return new TransipAPI($login, $privateKey, $generateWhitelistOnlyTokens);
     }
 }
