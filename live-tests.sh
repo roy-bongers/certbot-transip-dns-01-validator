@@ -67,8 +67,8 @@ sudo rm -rf "${PWD}"/letsencrypt/*
 # Run docker with env variables.
 #
 # Read credentials from config/config.php
-export TRANSIP_LOGIN=$(php -r '$config = include("config/config.php"); echo $config["login"];')
-export TRANSIP_PRIVATE_KEY=$(php -r '$config = include("config/config.php"); echo $config["private_key"];')
+export TRANSIP_LOGIN=$(php -r '$config = include("config/config.php"); echo $config["transip_login"];')
+export TRANSIP_PRIVATE_KEY=$(php -r '$config = include("config/config.php"); echo $config["transip_private_key"];')
 
 echo "Requesting certificate via Docker using ENV variables"
 docker run -ti \
