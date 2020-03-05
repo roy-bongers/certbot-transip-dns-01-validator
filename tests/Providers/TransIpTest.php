@@ -2,95 +2,160 @@
 
 namespace RoyBongers\CertbotDns01\Tests\Providers;
 
+use Hamcrest\Matchers;
 use Mockery;
 use Psr\Log\NullLogger;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Config;
-use Transip_DnsEntry;
-use Transip_DnsService;
-use Transip_DomainService;
+use Transip\Api\Library\Entity\Domain;
+use Transip\Api\Library\Entity\Domain\DnsEntry;
+use Transip\Api\Library\Repository\Domain\DnsRepository;
+use Transip\Api\Library\Repository\DomainRepository;
+use Transip\Api\Library\TransipAPI;
 use PHPUnit\Framework\TestCase;
 use RoyBongers\CertbotDns01\Providers\TransIp;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class TransIpTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /** @var TransIp $transIp */
     private $transIp;
 
-    /** @var Transip_DnsService $dnsService */
+    /** @var DnsRepository $dnsService */
     private $dnsService;
 
-    /** @var Transip_DomainService $domainService */
+    /** @var DomainRepository $domainService */
     private $domainService;
 
     public function testItCreatesChallengeDnsRecord(): void
     {
-        $this->domainService->shouldReceive('getInfo')->andReturn(
-            (object)[
-                'dnsEntries' => $this->generateDnsRecords(),
+        $expectedDnsEntry = new DnsEntry(
+            [
+                'name' => '_acme-challenge',
+                'expire' => 60,
+                'type' => 'TXT',
+                'content' => 'AfricanOrEuropeanSwallow',
             ]
         );
 
-        $expectedDnsEntry = new Transip_DnsEntry('_acme-challenge', 60, 'TXT', 'AfricanOrEuropeanSwallow');
-        $expectedDnsRecordCount = count($this->domainService->getInfo('domain.com')->dnsEntries) + 1;
+        $this->dnsService->shouldReceive('addDnsEntryToDomain')
+            ->with('domain.com', Matchers::equalTo($expectedDnsEntry))
+            ->once();
 
-        $this->dnsService->shouldReceive('setDnsEntries')->withArgs(
-            function ($domain, $dnsEntries) use ($expectedDnsRecordCount, $expectedDnsEntry) {
-                $this->assertEquals('domain.com', $domain);
-                $this->assertEquals($expectedDnsRecordCount, count($dnsEntries));
-                $this->assertContainsEquals($expectedDnsEntry, $dnsEntries);
-                return true;
-            }
-        )->once();
-
-        $this->transIp->createChallengeDnsRecord(new ChallengeRecord(
-            'domain.com',
-            '_acme-challenge',
-            'AfricanOrEuropeanSwallow'
-        ));
+        $this->transIp->createChallengeDnsRecord(
+            new ChallengeRecord(
+                'domain.com',
+                '_acme-challenge',
+                'AfricanOrEuropeanSwallow'
+            )
+        );
     }
 
     public function testItCleansChallengeDnsRecord(): void
     {
-        $challengeDnsEntry = new Transip_DnsEntry('_acme-challenge', 60, 'TXT', 'AfricanOrEuropeanSwallow');
-        $this->domainService->shouldReceive('getInfo')->andReturn(
-            (object)[
-                'dnsEntries' => $this->generateDnsRecords($challengeDnsEntry),
+        $challengeDnsEntry = new DnsEntry(
+            [
+                'name' => '_acme-challenge',
+                'expire' => 60,
+                'type' => 'TXT',
+                'content' => 'AfricanOrEuropeanSwallow',
             ]
         );
 
-        $expectedDnsRecordCount = count($this->domainService->getInfo('domain.com')->dnsEntries) - 1;
+        // return a list of DNS records.
+        $this->dnsService->shouldReceive('getByDomainName')
+            ->with('domain.com')
+            ->andReturn(
+                $this->generateDnsRecords($challengeDnsEntry)
+            )
+            ->once();
 
-        $this->dnsService->shouldReceive('setDnsEntries')->withArgs(
-            function ($domain, $dnsEntries) use ($expectedDnsRecordCount, $challengeDnsEntry) {
-                $this->assertEquals('domain.com', $domain);
-                $this->assertEquals($expectedDnsRecordCount, count($dnsEntries));
-                $this->assertNotContainsEquals($challengeDnsEntry, $dnsEntries);
-                $this->assertEquals(array_keys($dnsEntries), range(0, count($dnsEntries) - 1));
-                return true;
-            }
-        )->once();
+        // assert the challenge record is being removed.
+        $this->dnsService->shouldReceive('removeDnsEntry')
+            ->with('domain.com', Matchers::identicalTo($challengeDnsEntry))
+            ->once();
 
-        $this->transIp->cleanChallengeDnsRecord(new ChallengeRecord(
-            'domain.com',
-            '_acme-challenge',
-            'AfricanOrEuropeanSwallow'
-        ));
+        $this->transIp->cleanChallengeDnsRecord(
+            new ChallengeRecord(
+                'domain.com',
+                '_acme-challenge',
+                'AfricanOrEuropeanSwallow'
+            )
+        );
     }
 
-    private function generateDnsRecords(Transip_DnsEntry $additionalDnsEntry = null): array
+    public function testItFetchesDomainNames(): void
+    {
+        $domainNames = ['domain.com', 'example.nl'];
+        $domainNameObjects = array_map(
+            function (string $domain) {
+                return new Domain(['name' => $domain]);
+            },
+            $domainNames
+        );
+
+        $this->domainService->shouldReceive('getAll')->andReturn($domainNameObjects);
+
+        $this->assertEquals($domainNames, $this->transIp->getDomainNames());
+    }
+
+    private function generateDnsRecords(DnsEntry $additionalDnsEntry = null): array
     {
         $dnsEntries = [
-            new Transip_DnsEntry('*', 86400, 'CNAME', '@'),
-            new Transip_DnsEntry('@', 86400, 'A', '123.45.67.89'),
-            new Transip_DnsEntry('@', 86400, 'MX', '10 mx.domain.com'),
-            new Transip_DnsEntry('@', 86400, 'TXT', 'v=spf1 include=domain.com  ~all'),
-            new Transip_DnsEntry('@', 86400, 'CAA', '0 issue "letsencrypt.org"'),
-            new Transip_DnsEntry('www', 86400, 'CNAME', '@'),
-            new Transip_DnsEntry('subdomain', 3600, 'A', '98.76.54.32'),
+            [
+                'name' => '*',
+                'expire' => 86400,
+                'type' => DnsEntry::TYPE_CNAME,
+                'content' => '@'
+            ],
+            [
+                'name' => '@',
+                'expire' => 86400,
+                'type' => DnsEntry::TYPE_A,
+                'content' => '123.45.67.89'
+            ],
+            [
+                'name' => '@',
+                'expire' => 86400,
+                'type' => DnsEntry::TYPE_MX,
+                'content' => '10 mx.domain.com'
+            ],
+            [
+                'name' => '@',
+                'expire' => 86400,
+                'type' => DnsEntry::TYPE_TXT,
+                'content' => 'v=spf1 include=domain.com  ~all'
+            ],
+            [
+                'name' => '@',
+                'expire' => 86400,
+                'type' => DnsEntry::TYPE_CAA,
+                'content' => '0 issue "letsencrypt.org"'
+            ],
+            [
+                'name' => 'www',
+                'expire' => 86400,
+                'type' => DnsEntry::TYPE_CNAME,
+                'content' => '@'
+            ],
+            [
+                'name' => 'subdomain',
+                'expire' => 3600,
+                'type' => DnsEntry::TYPE_A,
+                'content' => '98.76.54.32'
+            ],
         ];
 
-        if ($additionalDnsEntry instanceof Transip_DnsEntry) {
+        $dnsEntries = array_map(
+            function ($dnsEntry) {
+                return new DnsEntry($dnsEntry);
+            },
+            $dnsEntries
+        );
+
+        if ($additionalDnsEntry instanceof DnsEntry) {
             $dnsEntries[] = $additionalDnsEntry;
         }
 
@@ -105,14 +170,16 @@ class TransIpTest extends TestCase
         $config = Mockery::mock(Config::class);
         $config->shouldReceive('get')->andReturn('test');
 
-        $this->transIp = new TransIp($config, new NullLogger());
-        $this->dnsService = Mockery::mock('overload:' . Transip_DnsService::class);
-        $this->domainService = Mockery::mock('overload:' . Transip_DomainService::class);
-    }
+        $this->dnsService = Mockery::mock(DnsRepository::class);
+        $this->domainService = Mockery::mock(DomainRepository::class);
 
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        Mockery::close();
+        // official TransipApi client
+        $transipClient = Mockery::mock(TransipAPI::class);
+        $transipClient->shouldReceive('domainDns')->andReturn($this->dnsService);
+        $transipClient->shouldReceive('domains')->andReturn($this->domainService);
+
+        // TransIp provider
+        $this->transIp = Mockery::mock(TransIp::class, [$config, new NullLogger()])->makePartial();
+        $this->transIp->shouldReceive('getTransipApiClient')->andReturn($transipClient);
     }
 }
