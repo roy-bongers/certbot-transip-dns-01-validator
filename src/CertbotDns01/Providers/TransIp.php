@@ -5,10 +5,8 @@ namespace RoyBongers\CertbotDns01\Providers;
 use Psr\Log\LoggerInterface;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Config;
-use Transip_DnsEntry;
-use Transip_DomainService;
-use Transip_DnsService;
-use Transip_ApiSettings;
+use Transip\Api\Library\Entity\Domain\DnsEntry;
+use Transip\Api\Library\TransipAPI;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 
 class TransIp implements ProviderInterface
@@ -16,18 +14,19 @@ class TransIp implements ProviderInterface
     /** @var LoggerInterface $logger */
     private $logger;
 
+    /** @var Config $config */
+    private $config;
+
+    /** @var TransipAPI $client */
+    private $client;
+
     /** @var array $domainNames */
     private $domainNames = [];
 
     public function __construct(Config $config, LoggerInterface $logger)
     {
+        $this->config = $config;
         $this->logger = $logger;
-
-        $login = $config->get('transip_login', $config->get('login'));
-        $privateKey = $config->get('transip_private_key', $config->get('private_key'));
-
-        Transip_ApiSettings::$login = trim($login);
-        Transip_ApiSettings::$privateKey = trim($privateKey);
     }
 
     /**
@@ -37,17 +36,15 @@ class TransIp implements ProviderInterface
      */
     public function createChallengeDnsRecord(ChallengeRecord $challengeRecord): void
     {
-        $dnsEntries = $this->getDnsEntries($challengeRecord->getDomain());
+        $challengeDnsEntry = new DnsEntry();
+        $challengeDnsEntry->setName($challengeRecord->getRecordName());
+        $challengeDnsEntry->setExpire(60);
+        $challengeDnsEntry->setType(DnsEntry::TYPE_TXT);
+        $challengeDnsEntry->setContent($challengeRecord->getValidation());
 
-        $challengeDnsEntry = new Transip_DnsEntry(
-            $challengeRecord->getRecordName(),
-            60,
-            Transip_DnsEntry::TYPE_TXT,
-            $challengeRecord->getValidation()
-        );
-
-        array_push($dnsEntries, $challengeDnsEntry);
-        Transip_DnsService::setDnsEntries($challengeRecord->getDomain(), $dnsEntries);
+        $this->getTransipApiClient()
+            ->domainDns()
+            ->addDnsEntryToDomain($challengeRecord->getDomain(), $challengeDnsEntry);
     }
 
     /**
@@ -57,20 +54,21 @@ class TransIp implements ProviderInterface
      */
     public function cleanChallengeDnsRecord(ChallengeRecord $challengeRecord): void
     {
-        $dnsEntries = $this->getDnsEntries($challengeRecord->getDomain());
+        $client = $this->getTransipApiClient();
+        $dnsEntries = $client->domainDns()->getByDomainName($challengeRecord->getDomain());
 
-        foreach ($dnsEntries as $index => $dnsEntry) {
-            if ($dnsEntry->name === $challengeRecord->getRecordName() &&
-                $dnsEntry->content === $challengeRecord->getValidation()
+        foreach ($dnsEntries as $dnsEntry) {
+            if ($dnsEntry->getName() === $challengeRecord->getRecordName() &&
+                $dnsEntry->getContent() === $challengeRecord->getValidation()
             ) {
-                $this->logger->debug(
-                    sprintf('Removing challenge DNS record(%s 60 TXT %s)', $dnsEntry->name, $dnsEntry->content)
-                );
-                unset($dnsEntries[$index]);
+                $this->logger->debug(sprintf(
+                    'Removing challenge DNS record(%s 60 TXT %s)',
+                    $dnsEntry->getName(),
+                    $dnsEntry->getContent()
+                ));
+                $client->domainDns()->removeDnsEntry($challengeRecord->getDomain(), $dnsEntry);
             }
         }
-        $dnsEntries = array_values($dnsEntries);
-        Transip_DnsService::setDnsEntries($challengeRecord->getDomain(), $dnsEntries);
     }
 
     /**
@@ -81,7 +79,10 @@ class TransIp implements ProviderInterface
     public function getDomainNames(): iterable
     {
         if (empty($this->domainNames)) {
-            $this->domainNames = Transip_DomainService::getDomainNames();
+            $domains = $this->getTransipApiClient()->domains()->getAll();
+            foreach ($domains as $domain) {
+                $this->domainNames[] = $domain->getName();
+            }
         }
 
         $this->logger->debug(sprintf('Domain names available: %s', implode(', ', $this->domainNames)));
@@ -89,24 +90,16 @@ class TransIp implements ProviderInterface
         return $this->domainNames;
     }
 
-    private function getDnsEntries(string $domainName): array
+    public function getTransipApiClient(): TransipAPI
     {
-        $dnsEntries = Transip_DomainService::getInfo($domainName)->dnsEntries;
-
-        $this->logger->debug(sprintf('Existing DNS records for %s:', $domainName));
-
-        foreach ($dnsEntries as $dnsEntry) {
-            $this->logger->debug(
-                sprintf(
-                    '%s %s %s %s',
-                    $dnsEntry->name,
-                    $dnsEntry->expire,
-                    $dnsEntry->type,
-                    $dnsEntry->content
-                )
-            );
+        if ($this->client instanceof TransipAPI) {
+            return $this->client;
         }
 
-        return $dnsEntries;
+        $login = $this->config->get('transip_login', $this->config->get('login'));
+        $privateKey = $this->config->get('transip_private_key', $this->config->get('private_key'));
+        $onlyWhitelistedIps = (bool) $this->config->get('transip_whitelisted_ip_only', true);
+
+        return new TransipAPI($login, $privateKey, $onlyWhitelistedIps);
     }
 }
