@@ -1167,16 +1167,16 @@
         },
         {
             "name": "transip/transip-api-php",
-            "version": "v6.0.2",
+            "version": "v6.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/transip/transip-api-php.git",
-                "reference": "3c578eeaa06e6b585324be93f165626e11be2acf"
+                "reference": "3505a6987fc70ba1c2c3df46981a07c7045bf316"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/3c578eeaa06e6b585324be93f165626e11be2acf",
-                "reference": "3c578eeaa06e6b585324be93f165626e11be2acf",
+                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/3505a6987fc70ba1c2c3df46981a07c7045bf316",
+                "reference": "3505a6987fc70ba1c2c3df46981a07c7045bf316",
                 "shasum": ""
             },
             "require": {
@@ -1184,7 +1184,7 @@
                 "ext-openssl": "*",
                 "guzzlehttp/guzzle": "^6.3",
                 "php": "^7.2.0",
-                "symfony/cache": "^5.0"
+                "symfony/cache": "^3.4|^4.4|^5.0"
             },
             "type": "library",
             "autoload": {
@@ -1203,7 +1203,7 @@
                 }
             ],
             "description": "TransIP Rest API Library",
-            "time": "2020-02-27T14:46:04+00:00"
+            "time": "2020-03-16T14:27:52+00:00"
         }
     ],
     "packages-dev": [
@@ -2808,16 +2808,16 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v5.0.5",
+            "version": "v5.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "b8fee53045a55ccbb9209e453bf6fdcf74381959"
+                "reference": "cb3f0f5bf8776bccaf8d61e4c91a573db58a19b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/b8fee53045a55ccbb9209e453bf6fdcf74381959",
-                "reference": "b8fee53045a55ccbb9209e453bf6fdcf74381959",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/cb3f0f5bf8776bccaf8d61e4c91a573db58a19b6",
+                "reference": "cb3f0f5bf8776bccaf8d61e4c91a573db58a19b6",
                 "shasum": ""
             },
             "require": {
@@ -2869,7 +2869,7 @@
             ],
             "description": "Symfony PHPUnit Bridge",
             "homepage": "https://symfony.com",
-            "time": "2020-02-24T15:05:31+00:00"
+            "time": "2020-03-15T14:33:06+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
