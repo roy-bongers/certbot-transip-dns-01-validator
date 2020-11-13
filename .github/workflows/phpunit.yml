@@ -39,4 +39,3 @@ jobs:
 
       - name: Code Style check
         run: composer lint
-        continue-on-error: true
