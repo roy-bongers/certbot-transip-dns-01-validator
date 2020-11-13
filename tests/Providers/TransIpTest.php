@@ -4,29 +4,29 @@ namespace RoyBongers\CertbotDns01\Tests\Providers;
 
 use Hamcrest\Matchers;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Config;
+use RoyBongers\CertbotDns01\Providers\TransIp;
 use Transip\Api\Library\Entity\Domain;
 use Transip\Api\Library\Entity\Domain\DnsEntry;
 use Transip\Api\Library\Repository\Domain\DnsRepository;
 use Transip\Api\Library\Repository\DomainRepository;
 use Transip\Api\Library\TransipAPI;
-use PHPUnit\Framework\TestCase;
-use RoyBongers\CertbotDns01\Providers\TransIp;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class TransIpTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /** @var TransIp $transIp */
+    /** @var TransIp */
     private $transIp;
 
-    /** @var DnsRepository $dnsService */
+    /** @var DnsRepository */
     private $dnsService;
 
-    /** @var DomainRepository $domainService */
+    /** @var DomainRepository */
     private $domainService;
 
     public function testItCreatesChallengeDnsRecord(): void
@@ -108,43 +108,43 @@ class TransIpTest extends TestCase
                 'name' => '*',
                 'expire' => 86400,
                 'type' => DnsEntry::TYPE_CNAME,
-                'content' => '@'
+                'content' => '@',
             ],
             [
                 'name' => '@',
                 'expire' => 86400,
                 'type' => DnsEntry::TYPE_A,
-                'content' => '123.45.67.89'
+                'content' => '123.45.67.89',
             ],
             [
                 'name' => '@',
                 'expire' => 86400,
                 'type' => DnsEntry::TYPE_MX,
-                'content' => '10 mx.domain.com'
+                'content' => '10 mx.domain.com',
             ],
             [
                 'name' => '@',
                 'expire' => 86400,
                 'type' => DnsEntry::TYPE_TXT,
-                'content' => 'v=spf1 include=domain.com  ~all'
+                'content' => 'v=spf1 include=domain.com  ~all',
             ],
             [
                 'name' => '@',
                 'expire' => 86400,
                 'type' => DnsEntry::TYPE_CAA,
-                'content' => '0 issue "letsencrypt.org"'
+                'content' => '0 issue "letsencrypt.org"',
             ],
             [
                 'name' => 'www',
                 'expire' => 86400,
                 'type' => DnsEntry::TYPE_CNAME,
-                'content' => '@'
+                'content' => '@',
             ],
             [
                 'name' => 'subdomain',
                 'expire' => 3600,
                 'type' => DnsEntry::TYPE_A,
-                'content' => '98.76.54.32'
+                'content' => '98.76.54.32',
             ],
         ];
 
@@ -160,6 +160,7 @@ class TransIpTest extends TestCase
         }
 
         shuffle($dnsEntries);
+
         return $dnsEntries;
     }
 

@@ -1,16 +1,16 @@
 <?php
 
-use Monolog\Logger;
-use Psr\Log\LogLevel;
 use DI\ContainerBuilder;
-use Psr\Log\LoggerInterface;
-use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use RoyBongers\CertbotDns01\Config;
-use RoyBongers\CertbotDns01\Providers\TransIp;
-use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 use RoyBongers\CertbotDns01\Providers\Exceptions\ProviderNotFoundException;
+use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
+use RoyBongers\CertbotDns01\Providers\TransIp;
 
 // define all available providers
 $providers = [
@@ -41,7 +41,7 @@ $builder->addDefinitions(
 
                 $outputFormat = "[%datetime%] %level_name%: %message% %context% %extra%\n";
                 $formatter = new LineFormatter($outputFormat, 'Y-m-d H:i:s.u');
-                if ($loglevel === LogLevel::DEBUG) {
+                if (LogLevel::DEBUG === $loglevel) {
                     $formatter->includeStacktraces();
                 }
 
@@ -49,7 +49,7 @@ $builder->addDefinitions(
                     (new StreamHandler('php://stdout', $loglevel))->setFormatter($formatter),
                     (new StreamHandler('php://stderr', LogLevel::ERROR))->setFormatter($formatter),
                 ];
-                if ($logfile !== null) {
+                if (null !== $logfile) {
                     $handlers[] = (new StreamHandler($logfile, $loglevel))->setFormatter($formatter);
                 }
 
