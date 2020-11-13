@@ -16,7 +16,7 @@
         "issues": "https://github.com/roy-bongers/certbot-transip-dns-01-validator/issues"
     },
     "require": {
-        "php": "^7.2",
+        "php": "^7.2||^8.0",
         "transip/transip-api-php": "^6.0",
         "monolog/monolog": "^2.0",
         "purplepixie/phpdns": "^2.0",
