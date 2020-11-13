@@ -1,10 +1,10 @@
 #!/usr/bin/env php
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 define('APP_ROOT', __DIR__);
-require_once(APP_ROOT.'/vendor/autoload.php');
-require_once(APP_ROOT . '/src/app.php');
+require_once APP_ROOT . '/vendor/autoload.php';
+require_once APP_ROOT . '/src/app.php';
 
 use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
@@ -12,7 +12,6 @@ use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
 try {
     $hookHandler = $container->get(Dns01ManualHookHandler::class);
     $hookHandler->authHook(new ManualHookRequest());
-}
-catch (Exception $exception) {
+} catch (Exception $exception) {
     $logger->error($exception->getMessage(), ['exception' => $exception]);
 }
