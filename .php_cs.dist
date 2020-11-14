@@ -1,0 +1,21 @@
+<?php
+
+$finder = Symfony\Component\Finder\Finder::create()
+    ->in(__DIR__)
+    ->exclude(['config', 'docs', 'logs', 'vendor'])
+    ->name(['auth-hook', 'cleanup-hook', '*.php'])
+    ->ignoreDotFiles(true)
+    ->ignoreVCS(true);
+
+return PhpCsFixer\Config::create()
+    ->setRules(
+        [
+            '@Symfony'                          => true,
+            'array_syntax'                      => ['syntax' => 'short'],
+            'no_unused_imports'                 => true,
+            'trailing_comma_in_multiline_array' => true,
+            'increment_style'                   => ['style' => 'post'],
+            'concat_space'                      => ['spacing' => 'one'],
+            'single_line_throw'                 => false,
+        ]
+    )->setFinder($finder);

@@ -5,22 +5,22 @@ namespace RoyBongers\CertbotDns01\Providers;
 use Psr\Log\LoggerInterface;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Config;
+use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 use Transip\Api\Library\Entity\Domain\DnsEntry;
 use Transip\Api\Library\TransipAPI;
-use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 
 class TransIp implements ProviderInterface
 {
-    /** @var LoggerInterface $logger */
+    /** @var LoggerInterface */
     private $logger;
 
-    /** @var Config $config */
+    /** @var Config */
     private $config;
 
-    /** @var TransipAPI $client */
+    /** @var TransipAPI */
     private $client;
 
-    /** @var array $domainNames */
+    /** @var array */
     private $domainNames = [];
 
     public function __construct(Config $config, LoggerInterface $logger)
@@ -31,8 +31,6 @@ class TransIp implements ProviderInterface
 
     /**
      * Create a TXT DNS record via the provider's API.
-     *
-     * @param  ChallengeRecord  $challengeRecord
      */
     public function createChallengeDnsRecord(ChallengeRecord $challengeRecord): void
     {
@@ -49,8 +47,6 @@ class TransIp implements ProviderInterface
 
     /**
      * Remove the created TXT record via the provider's API.
-     *
-     * @param  ChallengeRecord  $challengeRecord
      */
     public function cleanChallengeDnsRecord(ChallengeRecord $challengeRecord): void
     {
@@ -73,8 +69,6 @@ class TransIp implements ProviderInterface
 
     /**
      * Return a simple array containing the domain names that can be managed via the API.
-     *
-     * @return iterable
      */
     public function getDomainNames(): iterable
     {

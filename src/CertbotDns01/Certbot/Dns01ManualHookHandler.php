@@ -3,24 +3,24 @@
 namespace RoyBongers\CertbotDns01\Certbot;
 
 use Monolog\Logger;
-use RuntimeException;
 use Psr\Log\LoggerInterface;
 use PurplePixie\PhpDns\DNSQuery;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
+use RuntimeException;
 
 class Dns01ManualHookHandler
 {
-    /** @var int $sleep number of seconds to sleep between nameserver polling rounds */
+    /** @var int number of seconds to sleep between nameserver polling rounds */
     private $sleep;
 
-    /** @var int $maxTries maximum number of times the nameservers will be queried before throwing an exception */
+    /** @var int maximum number of times the nameservers will be queried before throwing an exception */
     private $maxTries;
 
-    /** @var ProviderInterface $provider */
+    /** @var ProviderInterface */
     private $provider;
 
-    /** @var Logger $logger */
+    /** @var Logger */
     protected $logger;
 
     public function __construct(
@@ -37,8 +37,6 @@ class Dns01ManualHookHandler
 
     /**
      * Perform the manual auth hook.
-     *
-     * @param  ManualHookRequest  $request
      */
     public function authHook(ManualHookRequest $request): void
     {
@@ -56,8 +54,6 @@ class Dns01ManualHookHandler
 
     /**
      * Perform the manual cleanup hook.
-     *
-     * @param  ManualHookRequest  $request
      */
     public function cleanupHook(ManualHookRequest $request): void
     {
@@ -74,9 +70,6 @@ class Dns01ManualHookHandler
 
     /**
      * Returns an ChallengeRecord instance which has all properties needed to perform the validation.
-     *
-     * @param  ManualHookRequest  $request
-     * @return ChallengeRecord
      */
     private function getChallengeRecord(ManualHookRequest $request): ChallengeRecord
     {
@@ -92,9 +85,6 @@ class Dns01ManualHookHandler
      * Search for the primary domain (zone) where the DNS records are stored. It loops through a list of options
      * starting with the full domain including subdomains. If that domain can't be managed by the provider a
      * subdomain part is stripped of and we search again.
-     *
-     * @param  string  $domain
-     * @return string
      */
     private function getBaseDomain(string $domain): string
     {
@@ -113,9 +103,6 @@ class Dns01ManualHookHandler
 
     /**
      * Return a list of domain names that we can use to search for the primary domain.
-     *
-     * @param  string  $fullyQualifiedDomainName
-     * @return array
      */
     private function getDomainGuesses(string $fullyQualifiedDomainName): array
     {
@@ -132,8 +119,6 @@ class Dns01ManualHookHandler
      * For some reason when a nameserver is just updated the new record appears and disappears again for
      * some time when polling continuously. Therefore we poll every nameserver until all are updated and
      * even then we wait another 30 seconds to be really sure they are all ok.
-     *
-     * @param ChallengeRecord $challengeRecord
      */
     private function waitForNameServers(ChallengeRecord $challengeRecord): void
     {
@@ -185,11 +170,6 @@ class Dns01ManualHookHandler
 
     /**
      * Perform a DNS query and check of the nameserver already has the up-to-date record.
-     *
-     * @param  string  $nameserver
-     * @param  string  $record
-     * @param  string  $validation
-     * @return bool
      */
     private function nameserverIsUpdated(string $nameserver, string $record, string $validation): bool
     {
@@ -199,11 +179,13 @@ class Dns01ManualHookHandler
 
         if (false === $dnsResults) {
             $this->logger->error('Empty DNS result');
+
             return false;
         }
 
         if (false !== $dnsQuery->hasError()) {
             $this->logger->error($dnsQuery->getLasterror());
+
             return false;
         }
 

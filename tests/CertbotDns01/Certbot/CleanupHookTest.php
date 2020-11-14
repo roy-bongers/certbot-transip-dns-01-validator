@@ -1,6 +1,6 @@
 <?php
 
-namespace RoyBongers\CertbotDns01\Tests\Certbot;
+namespace RoyBongers\Tests\CertbotDns01\Certbot;
 
 use Hamcrest\Matchers;
 use Mockery;
@@ -13,10 +13,10 @@ use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 
 class CleanupHookTest extends TestCase
 {
-    /** @var Dns01ManualHookHandler $hookHandler */
+    /** @var Dns01ManualHookHandler */
     private $hookHandler;
 
-    /** @var ProviderInterface $provider */
+    /** @var ProviderInterface */
     private $provider;
 
     public function testCleanupHookWithPrimaryDomain(): void

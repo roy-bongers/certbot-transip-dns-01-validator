@@ -1,30 +1,30 @@
 <?php
 
-namespace RoyBongers\CertbotDns01\Tests\Certbot;
+namespace RoyBongers\Tests\CertbotDns01\Certbot;
 
-use Mockery;
-use Psr\Log\NullLogger;
-use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
-use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
-use RuntimeException;
-use PHPUnit\Framework\TestCase;
-use PurplePixie\PhpDns\DNSQuery;
-use PurplePixie\PhpDns\DNSAnswer;
-use PurplePixie\PhpDns\DNSResult;
-use Symfony\Bridge\PhpUnit\DnsMock;
-use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
-use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 use Hamcrest\Matchers;
+use Mockery;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
+use PurplePixie\PhpDns\DNSAnswer;
+use PurplePixie\PhpDns\DNSQuery;
+use PurplePixie\PhpDns\DNSResult;
+use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
+use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
+use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
+use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
+use RuntimeException;
+use Symfony\Bridge\PhpUnit\DnsMock;
 
 class AuthHookTest extends TestCase
 {
-    /** @var Dns01ManualHookHandler $acme2 */
+    /** @var Dns01ManualHookHandler */
     private $acme2;
 
-    /** @var ProviderInterface $provider */
+    /** @var ProviderInterface */
     private $provider;
 
-    /** @var DNSQuery $dnsQuery */
+    /** @var DNSQuery */
     private $dnsQuery;
 
     public function testAuthHookWithPrimaryDomain(): void
