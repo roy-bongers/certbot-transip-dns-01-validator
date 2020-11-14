@@ -17,7 +17,7 @@ Version 2 has the following requirements. If you use older PHP versions you have
 Upgrading? See the [upgrade guide](#upgrade-guide).
 * PHP >= 7.2.0 with JSON and OpenSSL extensions enabled
 * [Certbot][2] >= v0.22
-* The [composer][3] package manager
+* The [composer][7] package manager
 
 ## Installation
 * Run `composer install --no-dev`
