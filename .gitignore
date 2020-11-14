@@ -6,17 +6,7 @@ letsencrypt
 
 # PHPStorm
 # User-specific stuff
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/**/usage.statistics.xml
-.idea/**/dictionaries
-.idea/**/shelf
-
-# Generated files
-.idea/**/contentModel.xml
-
-# Editor-based Rest Client
-.idea/httpRequests
+.idea/*
 
 # PHPUnit
 .phpunit.result.cache
