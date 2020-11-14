@@ -1,6 +1,6 @@
 <?php
 
-namespace RoyBongers\CertbotDns01\Tests\Certbot;
+namespace RoyBongers\Tests\CertbotDns01\Certbot;
 
 use Hamcrest\Matchers;
 use Mockery;
