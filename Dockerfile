@@ -1,4 +1,4 @@
-FROM php:latest
+FROM php:7.4
 WORKDIR /opt/certbot-dns-transip
 
 COPY . .
