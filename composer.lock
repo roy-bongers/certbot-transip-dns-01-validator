@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0498f8d68dc615567203cdc472b62cf",
+    "content-hash": "8d2bbf94b8216270731dd83977cf6861",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -1490,32 +1490,32 @@
         },
         {
             "name": "transip/transip-api-php",
-            "version": "v6.3.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/transip/transip-api-php.git",
-                "reference": "1bf59974fd07901911fde3b98becf2ca56a7809b"
+                "url": "https://github.com/IntVent/transip-api-php.git",
+                "reference": "c369bb3de48506bc5896e92736a4213f4bebc49b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/1bf59974fd07901911fde3b98becf2ca56a7809b",
-                "reference": "1bf59974fd07901911fde3b98becf2ca56a7809b",
+                "url": "https://api.github.com/repos/IntVent/transip-api-php/zipball/c369bb3de48506bc5896e92736a4213f4bebc49b",
+                "reference": "c369bb3de48506bc5896e92736a4213f4bebc49b",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-openssl": "*",
-                "guzzlehttp/guzzle": "^6.3",
-                "php": "^7.2.0",
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "php": "^7.2.0|^8.0",
                 "symfony/cache": "^3.4|^4.4|^5.0"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Transip\\Api\\Library\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
             ],
@@ -1527,10 +1527,9 @@
             ],
             "description": "TransIP Rest API Library",
             "support": {
-                "issues": "https://github.com/transip/transip-api-php/issues",
-                "source": "https://github.com/transip/transip-api-php/tree/v6.3.0"
+                "source": "https://github.com/IntVent/transip-api-php/tree/v6.3.1"
             },
-            "time": "2020-06-23T14:58:30+00:00"
+            "time": "2020-12-05T15:04:32+00:00"
         }
     ],
     "packages-dev": [
@@ -5361,7 +5360,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "transip/transip-api-php": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
