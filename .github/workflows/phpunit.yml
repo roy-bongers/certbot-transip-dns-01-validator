@@ -38,7 +38,10 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+        run: composer install --prefer-dist --no-progress --no-dev
 
-      - name: Run test suite
-        run: composer test
+      - name: PHPUnit tests
+        uses: php-actions/phpunit@v1
+        with:
+          php_version: 7.4
+          configuration: ./phpunit.xml
