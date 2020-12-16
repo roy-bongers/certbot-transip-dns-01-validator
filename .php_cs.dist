@@ -1,13 +1,18 @@
 <?php
 
-$finder = Symfony\Component\Finder\Finder::create()
+use Symfony\Component\Finder\Finder;
+use PhpCsFixer\Config;
+
+$finder = Finder::create()
     ->in(__DIR__)
     ->exclude(['config', 'docs', 'logs', 'vendor'])
-    ->name(['auth-hook', 'cleanup-hook', '*.php'])
+    ->name('auth-hook')
+    ->name('cleanup-hook')
+    ->name('*.php')
     ->ignoreDotFiles(true)
     ->ignoreVCS(true);
 
-return PhpCsFixer\Config::create()
+return (new Config())
     ->setRules(
         [
             '@Symfony'                          => true,
