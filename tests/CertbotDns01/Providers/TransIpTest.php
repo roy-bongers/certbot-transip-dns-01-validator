@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Config;
-use RoyBongers\CertbotDns01\Providers\TransIp;
+use RoyBongers\CertbotDns01\Providers\TransIp\TransIp;
 use Transip\Api\Library\Entity\Domain;
 use Transip\Api\Library\Entity\Domain\DnsEntry;
 use Transip\Api\Library\Repository\Domain\DnsRepository;
@@ -175,12 +175,12 @@ class TransIpTest extends TestCase
         $this->domainService = Mockery::mock(DomainRepository::class);
 
         // official TransipApi client
-        $transipClient = Mockery::mock(TransipAPI::class);
-        $transipClient->shouldReceive('domainDns')->andReturn($this->dnsService);
-        $transipClient->shouldReceive('domains')->andReturn($this->domainService);
+        $transIpClient = Mockery::mock(TransipAPI::class);
+        $transIpClient->shouldReceive('domainDns')->andReturn($this->dnsService);
+        $transIpClient->shouldReceive('domains')->andReturn($this->domainService);
 
         // TransIp provider
         $this->transIp = Mockery::mock(TransIp::class, [$config, new NullLogger()])->makePartial();
-        $this->transIp->shouldReceive('getTransipApiClient')->andReturn($transipClient);
+        $this->transIp->shouldReceive('getTransipApiClient')->andReturn($transIpClient);
     }
 }

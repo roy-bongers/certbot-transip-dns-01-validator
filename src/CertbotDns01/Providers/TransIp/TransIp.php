@@ -1,6 +1,6 @@
 <?php
 
-namespace RoyBongers\CertbotDns01\Providers;
+namespace RoyBongers\CertbotDns01\Providers\TransIp;
 
 use Psr\Log\LoggerInterface;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
@@ -40,7 +40,7 @@ class TransIp implements ProviderInterface
         $challengeDnsEntry->setType(DnsEntry::TYPE_TXT);
         $challengeDnsEntry->setContent($challengeRecord->getValidation());
 
-        $this->getTransipApiClient()
+        $this->getTransIpApiClient()
             ->domainDns()
             ->addDnsEntryToDomain($challengeRecord->getDomain(), $challengeDnsEntry);
     }
@@ -50,7 +50,7 @@ class TransIp implements ProviderInterface
      */
     public function cleanChallengeDnsRecord(ChallengeRecord $challengeRecord): void
     {
-        $client = $this->getTransipApiClient();
+        $client = $this->getTransIpApiClient();
         $dnsEntries = $client->domainDns()->getByDomainName($challengeRecord->getDomain());
 
         foreach ($dnsEntries as $dnsEntry) {
@@ -73,7 +73,7 @@ class TransIp implements ProviderInterface
     public function getDomainNames(): iterable
     {
         if (empty($this->domainNames)) {
-            $domains = $this->getTransipApiClient()->domains()->getAll();
+            $domains = $this->getTransIpApiClient()->domains()->getAll();
             foreach ($domains as $domain) {
                 $this->domainNames[] = $domain->getName();
             }
@@ -84,7 +84,7 @@ class TransIp implements ProviderInterface
         return $this->domainNames;
     }
 
-    public function getTransipApiClient(): TransipAPI
+    public function getTransIpApiClient(): TransipAPI
     {
         if ($this->client instanceof TransipAPI) {
             return $this->client;
@@ -94,6 +94,9 @@ class TransIp implements ProviderInterface
         $privateKey = $this->config->get('transip_private_key', $this->config->get('private_key'));
         $generateWhitelistOnlyTokens = (bool) $this->config->get('transip_whitelist_only_token', true);
 
-        return new TransipAPI($login, $privateKey, $generateWhitelistOnlyTokens);
+        $this->client = new TransipAPI($login, $privateKey, $generateWhitelistOnlyTokens);
+        $this->client->setHttpClient(new HttpClient($this->client->getEndpointUrl()));
+
+        return $this->client;
     }
 }
