@@ -27,7 +27,7 @@
         }
     ],
     "require": {
-        "php": "^7.2||^8.0",
+        "php": "^7.3||^8.0",
         "transip/transip-api-php": "dev-master",
         "monolog/monolog": "^2.0",
         "purplepixie/phpdns": "^2.0",

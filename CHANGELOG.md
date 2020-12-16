@@ -6,9 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.5.1] - 2020-12-16
 ## Fixed
- - Fixes PHP 8 support
+- Fixes PHP 8 support
 ## Changed
- - PHP-CS-Fixer now runs as separate GitHub action
+- PHP-CS-Fixer now runs as separate GitHub action
 
 ## [2.5.0] - 2020-11-14
 ### Added
@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Use PHP-CS-Fixer instead of PHP_CodeSniffer
 - Improve code style
+### Removes
+- PHP 7.2 support
 
 ## [2.4.3] - 2020-07-02
 ### Changed
