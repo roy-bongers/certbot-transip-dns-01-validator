@@ -10,11 +10,17 @@ jobs:
     name: Build (PHP ${{ matrix.php-versions }})
 
     strategy:
+      fail-fast: false
       matrix:
-        php-versions: ['7.2', '7.3', '7.4', '8.0']
+        php-versions: ['7.3', '7.4', '8.0']
 
     steps:
       - uses: actions/checkout@v1
+
+      - name: Setup PHP ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
 
       - name: Validate composer.json and composer.lock
         run: composer validate
@@ -32,10 +38,7 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress
 
       - name: Run test suite
         run: composer test
-
-      - name: Code Style check
-        run: composer lint
