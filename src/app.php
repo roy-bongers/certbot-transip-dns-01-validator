@@ -10,7 +10,7 @@ use Psr\Log\LogLevel;
 use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\Exceptions\ProviderNotFoundException;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
-use RoyBongers\CertbotDns01\Providers\TransIp;
+use RoyBongers\CertbotDns01\Providers\TransIp\TransIp;
 
 // define all available providers
 $providers = [
