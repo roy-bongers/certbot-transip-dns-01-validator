@@ -87,6 +87,6 @@ class HttpClient extends GuzzleClient
 
     protected function isTokenRevoked(UnauthorizedException $exception): bool
     {
-        return 'Your access token has been revoked.' !== $exception->getMessage();
+        return 'Your access token has been revoked.' === $exception->getMessage();
     }
 }
