@@ -20,23 +20,18 @@
     "support": {
         "issues": "https://github.com/roy-bongers/certbot-transip-dns-01-validator/issues"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/IntVent/transip-api-php"
-        }
-    ],
     "require": {
         "php": "^7.3||^8.0",
-        "transip/transip-api-php": "dev-master",
         "monolog/monolog": "^2.0",
         "purplepixie/phpdns": "^2.0",
-        "php-di/php-di": "^6.0"
+        "php-di/php-di": "^6.0",
+        "transip/transip-api-php": "^6.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
         "mockery/mockery": "^1.3.0",
-        "symfony/phpunit-bridge": "^5.0"
+        "symfony/phpunit-bridge": "^5.0",
+        "friendsofphp/php-cs-fixer": "^2.17"
     },
     "autoload": {
         "psr-4": {
@@ -58,5 +53,10 @@
         "lint": [
             "php-cs-fixer fix --dry-run"
         ]
+    },
+    "config": {
+        "platform": {
+            "php": "7.3"
+        }
     }
 }
