@@ -13,10 +13,9 @@ When you need to renew your certificate you also need to perform the DNS-01 chal
 automatically.
 
 ## Requirements
-Version 2 has the following requirements. If you use older PHP versions you have to use the latest 1.x release.
-Upgrading? See the [upgrade guide](#upgrade-guide).
-* PHP >= 7.2.0 with JSON and OpenSSL extensions enabled
-* [Certbot][2] >= v0.22
+Version 2.5 has the following requirements. If you use an older PHP version you have to use an older release.
+Upgrading from v1? See the [upgrade guide](#upgrade-guide).
+* PHP >= 7.3.0 with JSON and OpenSSL extensions enabled
 * The [composer][7] package manager
 
 ## Installation
