@@ -17,6 +17,7 @@ class HttpClient extends GuzzleClient
             }
 
             $this->clearToken();
+
             return parent::get($url, $query);
         }
     }
