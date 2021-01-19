@@ -1493,16 +1493,16 @@
         },
         {
             "name": "transip/transip-api-php",
-            "version": "v6.4.0",
+            "version": "v6.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/transip/transip-api-php.git",
-                "reference": "abc1fa2766ed89b509dbc41087ec53cdc297deba"
+                "reference": "764955f705ef7aeb1c1506f0734f65207c6caf93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/abc1fa2766ed89b509dbc41087ec53cdc297deba",
-                "reference": "abc1fa2766ed89b509dbc41087ec53cdc297deba",
+                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/764955f705ef7aeb1c1506f0734f65207c6caf93",
+                "reference": "764955f705ef7aeb1c1506f0734f65207c6caf93",
                 "shasum": ""
             },
             "require": {
@@ -1535,9 +1535,9 @@
             "description": "TransIP Rest API Library",
             "support": {
                 "issues": "https://github.com/transip/transip-api-php/issues",
-                "source": "https://github.com/transip/transip-api-php/tree/v6.4.0"
+                "source": "https://github.com/transip/transip-api-php/tree/v6.5.0"
             },
-            "time": "2021-01-12T14:24:15+00:00"
+            "time": "2021-01-18T12:09:58+00:00"
         }
     ],
     "packages-dev": [
