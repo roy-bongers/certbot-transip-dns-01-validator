@@ -1,4 +1,4 @@
-name: Run PHPUnit & PHPCS syle check
+name: Run PHPUnit & PHPCS style check
 
 on: [push]
 
