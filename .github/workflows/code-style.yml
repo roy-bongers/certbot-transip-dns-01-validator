@@ -1,4 +1,4 @@
-name: PHP-CS-Fixer syle check
+name: PHP-CS-Fixer style check
 
 on: [push]
 

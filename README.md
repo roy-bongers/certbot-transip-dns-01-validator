@@ -79,7 +79,7 @@ renew
 ```
 
 ## Supported platforms
-The code is tested on a Debian based Linux distribution (Ubuntu LTS) and currently supported PHP versions (>= 7.2).
+The code is tested on a Debian based Linux distribution (Ubuntu LTS) and currently supported PHP versions (>= 7.3).
 It probably works fine on other systems and versions of PHP but no guarantees are made.
 
 ## Upgrade guide
