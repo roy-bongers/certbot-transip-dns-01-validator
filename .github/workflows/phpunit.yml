@@ -1,4 +1,4 @@
-name: Run PHPUnit & PHPCS style check
+name: Run PHPUnit tests
 
 on: [push]
 
