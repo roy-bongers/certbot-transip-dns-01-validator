@@ -15,6 +15,8 @@ use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 use RuntimeException;
 use Symfony\Bridge\PhpUnit\DnsMock;
+use Transip\Api\Library\Entity\AbstractEntity;
+use Transip\Api\Library\Entity\Domain\Nameserver;
 
 class AuthHookTest extends TestCase
 {
@@ -41,6 +43,9 @@ class AuthHookTest extends TestCase
             ->with(Matchers::equalTo($expectedChallengeRecord))
             ->once();
 
+        $this->provider->shouldReceive('getNameservers')
+            ->andReturn($this->createNameserverResponse());
+
         // mock DNSQuery class
         $dnsAnswer = $this->createDnsAnswer('domain.com', 'AfricanOrEuropeanSwallow');
         $this->dnsQuery->shouldReceive('Query')->andReturn($dnsAnswer);
@@ -65,6 +70,9 @@ class AuthHookTest extends TestCase
         $this->provider->shouldReceive('createChallengeDnsRecord')
             ->with(Matchers::equalTo($expectedChallengeRecord))
             ->once();
+
+        $this->provider->shouldReceive('getNameservers')
+            ->andReturn($this->createNameserverResponse());
 
         // mock DNSQuery class
         $dnsAnswer = $this->createDnsAnswer('sub.domain.com', 'AfricanOrEuropeanSwallow');
@@ -93,6 +101,9 @@ class AuthHookTest extends TestCase
 
         $this->provider->shouldReceive('createChallengeDnsRecord');
 
+        $this->provider->shouldReceive('getNameservers')
+            ->andReturn($this->createNameserverResponse());
+
         // mock DNSQuery class
         $dnsAnswer = $this->createDnsAnswer('domain.com', 'HowDoYouKnowSoMuchAboutSwallows');
         $this->dnsQuery->shouldReceive('Query')->andReturn($dnsAnswer);
@@ -119,6 +130,15 @@ class AuthHookTest extends TestCase
         $dnsAnswer->addResult($dnsResult);
 
         return $dnsAnswer;
+    }
+
+    private function createNameserverResponse(): array
+    {
+        return [
+            'ns0.transip.net',
+            'ns1.transip.nl',
+            'ns2.transip.eu'
+        ];
     }
 
     public function setUp(): void
