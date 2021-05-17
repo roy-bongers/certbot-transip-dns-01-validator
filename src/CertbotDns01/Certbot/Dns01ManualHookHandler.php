@@ -204,11 +204,6 @@ class Dns01ManualHookHandler
         return rtrim('_acme-challenge.' . $subDomain, '.');
     }
 
-    private function getNameServers(string $domain): array
-    {
-        return array_column(dns_get_record($domain, DNS_NS), 'target');
-    }
-
     private function getSubDomain(string $baseDomain, string $domain): string
     {
         return rtrim(substr($domain, 0, strrpos($domain, $baseDomain)), '.');
