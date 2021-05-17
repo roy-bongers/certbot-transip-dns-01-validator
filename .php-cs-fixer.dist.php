@@ -18,7 +18,7 @@ return (new Config())
             '@Symfony'                          => true,
             'array_syntax'                      => ['syntax' => 'short'],
             'no_unused_imports'                 => true,
-            'trailing_comma_in_multiline_array' => true,
+            'trailing_comma_in_multiline'       => ['elements' => ['arrays']],
             'increment_style'                   => ['style' => 'post'],
             'concat_space'                      => ['spacing' => 'one'],
             'single_line_throw'                 => false,
