@@ -20,4 +20,9 @@ interface ProviderInterface
      * Return a simple array containing the domain names that can be managed via the API.
      */
     public function getDomainNames(): iterable;
+
+    /**
+     * Return all nameservers for a given domain.
+     */
+    public function getNameservers(string $domainName): array;
 }

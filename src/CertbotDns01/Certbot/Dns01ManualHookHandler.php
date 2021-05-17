@@ -126,7 +126,7 @@ class Dns01ManualHookHandler
         $updatedRecords = 0;
 
         $dnsRecord = $challengeRecord->getFullRecordName();
-        $nameservers = $this->getNameServers($challengeRecord->getDomain());
+        $nameservers = $this->provider->getNameservers($challengeRecord->getDomain());
         $totalNameservers = count($nameservers);
 
         $this->logger->info(sprintf('Waiting until nameservers (%s) are up-to-date', implode(', ', $nameservers)));
