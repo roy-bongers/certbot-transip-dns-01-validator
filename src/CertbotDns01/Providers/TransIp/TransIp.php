@@ -87,13 +87,13 @@ class TransIp implements ProviderInterface
 
     public function getNameservers(string $domainName): array
     {
-        $nameServers = $this->getTransIpApiClient()
+        $nameservers = $this->getTransIpApiClient()
             ->domainNameserver()
             ->getByDomainName($domainName);
 
         return array_map(function (Nameserver $nameserver) {
             return $nameserver->getHostname();
-        }, $nameServers);
+        }, $nameservers);
     }
 
     public function getTransIpApiClient(): TransipAPI
