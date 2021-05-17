@@ -11,4 +11,6 @@ letsencrypt
 # PHPUnit
 .phpunit.result.cache
 .php_cs
+.php-cs-fixer.dist.php
 .php_cs.cache
+.php-cs-fixer.cache
