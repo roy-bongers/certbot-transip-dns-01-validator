@@ -6,7 +6,6 @@ use Psr\Log\LoggerInterface;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Transip\Api\Library\Entity\Domain\DnsEntry;
 use Transip\Api\Library\TransipAPI;
 
@@ -95,16 +94,17 @@ class TransIp implements ProviderInterface
         $privateKey = $this->config->get('transip_private_key', $this->config->get('private_key'));
         $generateWhitelistOnlyTokens = (bool) $this->config->get('transip_whitelist_only_token', true);
 
-        $this->client = new TransipAPI($login, $privateKey, $generateWhitelistOnlyTokens);
+        $httpClient = new HttpClient(TransipAPI::TRANSIP_API_ENDPOINT);
 
-        $httpClient = new HttpClient($this->client->getEndpointUrl());
-        $httpClient->setLogin($this->client->getLogin());
-        $httpClient->setPrivateKey($privateKey);
-        $httpClient->setCache(new FilesystemAdapter());
-        $httpClient->setGenerateWhitelistOnlyTokens($this->client->getGenerateWhitelistOnlyTokens());
-        $httpClient->getTokenFromCache();
-
-        $this->client->setHttpClient($httpClient);
+        $this->client = new TransipAPI(
+            $login,
+            $privateKey,
+            $generateWhitelistOnlyTokens,
+            '',
+            '',
+            null,
+            $httpClient
+        );
 
         return $this->client;
     }
