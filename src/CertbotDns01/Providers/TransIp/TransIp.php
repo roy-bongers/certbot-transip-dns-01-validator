@@ -7,6 +7,7 @@ use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 use Transip\Api\Library\Entity\Domain\DnsEntry;
+use Transip\Api\Library\Entity\Domain\Nameserver;
 use Transip\Api\Library\TransipAPI;
 
 class TransIp implements ProviderInterface
@@ -82,6 +83,17 @@ class TransIp implements ProviderInterface
         $this->logger->debug(sprintf('Domain names available: %s', implode(', ', $this->domainNames)));
 
         return $this->domainNames;
+    }
+
+    public function getNameservers(string $domainName): array
+    {
+        $nameservers = $this->getTransIpApiClient()
+            ->domainNameserver()
+            ->getByDomainName($domainName);
+
+        return array_map(function (Nameserver $nameserver) {
+            return $nameserver->getHostname();
+        }, $nameservers);
     }
 
     public function getTransIpApiClient(): TransipAPI
