@@ -126,7 +126,7 @@ class Dns01ManualHookHandler
         $updatedRecords = 0;
 
         $dnsRecord = $challengeRecord->getFullRecordName();
-        $nameservers = $this->getNameServers($challengeRecord->getDomain());
+        $nameservers = $this->provider->getNameservers($challengeRecord->getDomain());
         $totalNameservers = count($nameservers);
 
         $this->logger->info(sprintf('Waiting until nameservers (%s) are up-to-date', implode(', ', $nameservers)));
@@ -202,11 +202,6 @@ class Dns01ManualHookHandler
     private function getRecordName(string $subDomain): string
     {
         return rtrim('_acme-challenge.' . $subDomain, '.');
-    }
-
-    private function getNameServers(string $domain): array
-    {
-        return array_column(dns_get_record($domain, DNS_NS), 'target');
     }
 
     private function getSubDomain(string $baseDomain, string $domain): string
