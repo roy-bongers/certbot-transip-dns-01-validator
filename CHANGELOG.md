@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.7.0] - 2021-02-03
 ## Added
-- Build Docker images for multiple platforms: 386, amd64, arm/v6, arm/v7, arm64
+- Build multiple Docker architectures [#92](https://github.com/roy-bongers/certbot-transip-dns-01-validator/pull/92), thanks to [BasSmeets](https://github.com/BasSmeets)
 
 ## [2.6.0] - 2020-12-17
 ## Added
