@@ -4,8 +4,10 @@ namespace RoyBongers\CertbotDns01\Providers\TransIp;
 
 use Psr\Log\LoggerInterface;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
+use RoyBongers\CertbotDns01\Certbot\TlsaRecord;
 use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
+use Stayallive\TLSA\Builder;
 use Transip\Api\Library\Entity\Domain\DnsEntry;
 use Transip\Api\Library\Entity\Domain\Nameserver;
 use Transip\Api\Library\TransipAPI;
@@ -96,7 +98,40 @@ class TransIp implements ProviderInterface
         }, $nameservers);
     }
 
-    public function getTransIpApiClient(): TransipAPI
+    public function addTlsaRecord(
+        string $domainName,
+        TlsaRecord $tlsaRecord,
+        $ttl = 300
+    ) {
+        $dnsEntry = new DnsEntry([
+            'name'    => $tlsaRecord->getName(),
+            'expires' => $ttl,
+            'type'    => DnsEntry::TYPE_TLSA,
+            'content' => $tlsaRecord->getContent(),
+        ]);
+
+        $this->insertOrUpdateDnsEntry($domainName, $dnsEntry);
+    }
+
+    private function insertOrUpdateDnsEntry(string $domainName, DnsEntry $dnsEntry): void
+    {
+        $client = $this->getTransIpApiClient();
+        $dnsEntries = $client->domainDns()->getByDomainName($domainName);
+        foreach ($dnsEntries as $existingDnsEntry) {
+            /** @var DnsEntry $existingDnsEntry */
+            if (
+                $existingDnsEntry->getType() === $dnsEntry->getType() &&
+                $existingDnsEntry->getName() === $dnsEntry->getName())
+            {
+                $this->getTransIpApiClient()->domainDns()->updateEntry($domainName, $dnsEntry);
+                return;
+            }
+        }
+
+        $this->getTransIpApiClient()->domainDns()->addDnsEntryToDomain($domainName, $dnsEntry);
+    }
+
+    private function getTransIpApiClient(): TransipAPI
     {
         if ($this->client instanceof TransipAPI) {
             return $this->client;

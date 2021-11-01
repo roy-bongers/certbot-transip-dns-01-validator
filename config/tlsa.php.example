@@ -1,0 +1,12 @@
+<?php
+
+return [
+    [
+        'port'          => 443,
+        'protocol'      => 'tcp',
+        'domain'        => 'subdomain.example.org',
+        'usage'         => 1,
+        'selector'      => 2,
+        'matching-type' => 3,
+    ],
+];
