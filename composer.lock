@@ -1064,16 +1064,16 @@
         },
         {
             "name": "symfony/cache",
-            "version": "v5.3.10",
+            "version": "v5.3.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache.git",
-                "reference": "2056f2123f47c9f63102a8b92974c362f4fba568"
+                "reference": "862a05a5eea77c5b5a992fbacc849f492a728d9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/cache/zipball/2056f2123f47c9f63102a8b92974c362f4fba568",
-                "reference": "2056f2123f47c9f63102a8b92974c362f4fba568",
+                "url": "https://api.github.com/repos/symfony/cache/zipball/862a05a5eea77c5b5a992fbacc849f492a728d9b",
+                "reference": "862a05a5eea77c5b5a992fbacc849f492a728d9b",
                 "shasum": ""
             },
             "require": {
@@ -1095,7 +1095,7 @@
             },
             "provide": {
                 "psr/cache-implementation": "1.0|2.0",
-                "psr/simple-cache-implementation": "1.0",
+                "psr/simple-cache-implementation": "1.0|2.0",
                 "symfony/cache-implementation": "1.0|2.0"
             },
             "require-dev": {
@@ -1103,7 +1103,7 @@
                 "doctrine/cache": "^1.6|^2.0",
                 "doctrine/dbal": "^2.10|^3.0",
                 "predis/predis": "^1.1",
-                "psr/simple-cache": "^1.0",
+                "psr/simple-cache": "^1.0|^2.0",
                 "symfony/config": "^4.4|^5.0",
                 "symfony/dependency-injection": "^4.4|^5.0",
                 "symfony/filesystem": "^4.4|^5.0",
@@ -1141,7 +1141,7 @@
                 "psr6"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache/tree/v5.3.10"
+                "source": "https://github.com/symfony/cache/tree/v5.3.11"
             },
             "funding": [
                 {
@@ -1157,20 +1157,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-10-11T15:41:55+00:00"
+            "time": "2021-11-20T15:01:50+00:00"
         },
         {
             "name": "symfony/cache-contracts",
-            "version": "v2.4.0",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache-contracts.git",
-                "reference": "c0446463729b89dd4fa62e9aeecc80287323615d"
+                "reference": "ac2e168102a2e06a2624f0379bde94cd5854ced2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/cache-contracts/zipball/c0446463729b89dd4fa62e9aeecc80287323615d",
-                "reference": "c0446463729b89dd4fa62e9aeecc80287323615d",
+                "url": "https://api.github.com/repos/symfony/cache-contracts/zipball/ac2e168102a2e06a2624f0379bde94cd5854ced2",
+                "reference": "ac2e168102a2e06a2624f0379bde94cd5854ced2",
                 "shasum": ""
             },
             "require": {
@@ -1183,7 +1183,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "2.4-dev"
+                    "dev-main": "2.5-dev"
                 },
                 "thanks": {
                     "name": "symfony/contracts",
@@ -1220,7 +1220,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache-contracts/tree/v2.4.0"
+                "source": "https://github.com/symfony/cache-contracts/tree/v2.5.0"
             },
             "funding": [
                 {
@@ -1236,7 +1236,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-03-23T23:28:01+00:00"
+            "time": "2021-08-17T14:20:01+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -1469,21 +1469,25 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v2.4.0",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "f040a30e04b57fbcc9c6cbcf4dbaa96bd318b9bb"
+                "reference": "1ab11b933cd6bc5464b08e81e2c5b07dec58b0fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/f040a30e04b57fbcc9c6cbcf4dbaa96bd318b9bb",
-                "reference": "f040a30e04b57fbcc9c6cbcf4dbaa96bd318b9bb",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/1ab11b933cd6bc5464b08e81e2c5b07dec58b0fc",
+                "reference": "1ab11b933cd6bc5464b08e81e2c5b07dec58b0fc",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.5",
-                "psr/container": "^1.1"
+                "psr/container": "^1.1",
+                "symfony/deprecation-contracts": "^2.1"
+            },
+            "conflict": {
+                "ext-psr": "<1.1|>=2"
             },
             "suggest": {
                 "symfony/service-implementation": ""
@@ -1491,7 +1495,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "2.4-dev"
+                    "dev-main": "2.5-dev"
                 },
                 "thanks": {
                     "name": "symfony/contracts",
@@ -1528,7 +1532,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/v2.4.0"
+                "source": "https://github.com/symfony/service-contracts/tree/v2.5.0"
             },
             "funding": [
                 {
@@ -1544,20 +1548,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-04-01T10:43:52+00:00"
+            "time": "2021-11-04T16:48:04+00:00"
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v5.3.8",
+            "version": "v5.3.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "a7604de14bcf472fe8e33f758e9e5b7bf07d3b91"
+                "reference": "b16fcf355b810bcbccc2c6eac1d016725dbf9002"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/a7604de14bcf472fe8e33f758e9e5b7bf07d3b91",
-                "reference": "a7604de14bcf472fe8e33f758e9e5b7bf07d3b91",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/b16fcf355b810bcbccc2c6eac1d016725dbf9002",
+                "reference": "b16fcf355b810bcbccc2c6eac1d016725dbf9002",
                 "shasum": ""
             },
             "require": {
@@ -1601,7 +1605,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v5.3.8"
+                "source": "https://github.com/symfony/var-exporter/tree/v5.3.11"
             },
             "funding": [
                 {
@@ -1617,20 +1621,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-31T12:49:16+00:00"
+            "time": "2021-11-22T10:43:59+00:00"
         },
         {
             "name": "transip/transip-api-php",
-            "version": "6.10.0",
+            "version": "v6.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/transip/transip-api-php.git",
-                "reference": "7cbbc89cae01ae23c5e4ff0087fa427798acb6cf"
+                "reference": "da9c5175de3e866b4193935f93311daaa53ca1ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/7cbbc89cae01ae23c5e4ff0087fa427798acb6cf",
-                "reference": "7cbbc89cae01ae23c5e4ff0087fa427798acb6cf",
+                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/da9c5175de3e866b4193935f93311daaa53ca1ae",
+                "reference": "da9c5175de3e866b4193935f93311daaa53ca1ae",
                 "shasum": ""
             },
             "require": {
@@ -1663,9 +1667,9 @@
             "description": "TransIP Rest API Library",
             "support": {
                 "issues": "https://github.com/transip/transip-api-php/issues",
-                "source": "https://github.com/transip/transip-api-php/tree/6.10.0"
+                "source": "https://github.com/transip/transip-api-php/tree/v6.11.0"
             },
-            "time": "2021-11-05T12:00:09+00:00"
+            "time": "2021-11-22T09:40:57+00:00"
         }
     ],
     "packages-dev": [
