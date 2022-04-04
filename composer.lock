@@ -1064,16 +1064,16 @@
         },
         {
             "name": "symfony/cache",
-            "version": "v5.4.6",
+            "version": "v5.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache.git",
-                "reference": "c0718d0e01ac14251a45cc9c8b93716ec41ae64b"
+                "reference": "ba06841ed293fcaf79a592f59fdaba471f7c756c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/cache/zipball/c0718d0e01ac14251a45cc9c8b93716ec41ae64b",
-                "reference": "c0718d0e01ac14251a45cc9c8b93716ec41ae64b",
+                "url": "https://api.github.com/repos/symfony/cache/zipball/ba06841ed293fcaf79a592f59fdaba471f7c756c",
+                "reference": "ba06841ed293fcaf79a592f59fdaba471f7c756c",
                 "shasum": ""
             },
             "require": {
@@ -1141,7 +1141,7 @@
                 "psr6"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache/tree/v5.4.6"
+                "source": "https://github.com/symfony/cache/tree/v5.4.7"
             },
             "funding": [
                 {
@@ -1157,7 +1157,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-03-02T12:56:28+00:00"
+            "time": "2022-03-22T15:31:03+00:00"
         },
         {
             "name": "symfony/cache-contracts",
@@ -1552,16 +1552,16 @@
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v5.4.6",
+            "version": "v5.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "49e2355fe6f59ea30c18ebb68edf13b7e20582e5"
+                "reference": "7eacaa588c9b27f2738575adb4a8457a80d9c807"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/49e2355fe6f59ea30c18ebb68edf13b7e20582e5",
-                "reference": "49e2355fe6f59ea30c18ebb68edf13b7e20582e5",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/7eacaa588c9b27f2738575adb4a8457a80d9c807",
+                "reference": "7eacaa588c9b27f2738575adb4a8457a80d9c807",
                 "shasum": ""
             },
             "require": {
@@ -1605,7 +1605,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v5.4.6"
+                "source": "https://github.com/symfony/var-exporter/tree/v5.4.7"
             },
             "funding": [
                 {
@@ -1621,20 +1621,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-03-02T12:42:23+00:00"
+            "time": "2022-03-31T17:09:19+00:00"
         },
         {
             "name": "transip/transip-api-php",
-            "version": "v6.16.0",
+            "version": "v6.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/transip/transip-api-php.git",
-                "reference": "e426ed7cf1b782cda7edcbb64c727e49b25f339d"
+                "reference": "701ade94c5a368144d0a3d45a3ad2899c4013883"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/e426ed7cf1b782cda7edcbb64c727e49b25f339d",
-                "reference": "e426ed7cf1b782cda7edcbb64c727e49b25f339d",
+                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/701ade94c5a368144d0a3d45a3ad2899c4013883",
+                "reference": "701ade94c5a368144d0a3d45a3ad2899c4013883",
                 "shasum": ""
             },
             "require": {
@@ -1667,9 +1667,9 @@
             "description": "TransIP Rest API Library",
             "support": {
                 "issues": "https://github.com/transip/transip-api-php/issues",
-                "source": "https://github.com/transip/transip-api-php/tree/v6.16.0"
+                "source": "https://github.com/transip/transip-api-php/tree/v6.16.1"
             },
-            "time": "2022-03-23T14:03:32+00:00"
+            "time": "2022-04-01T10:50:03+00:00"
         }
     ],
     "packages-dev": [
