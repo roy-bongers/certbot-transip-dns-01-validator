@@ -979,12 +979,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/roy-bongers/phpdns.git",
-                "reference": "6598876c2ac6857fec65b96b4fc26205b143de0e"
+                "reference": "717554494d786ae1a65989764627f6b092ad8b9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/roy-bongers/phpdns/zipball/6598876c2ac6857fec65b96b4fc26205b143de0e",
-                "reference": "6598876c2ac6857fec65b96b4fc26205b143de0e",
+                "url": "https://api.github.com/repos/roy-bongers/phpdns/zipball/717554494d786ae1a65989764627f6b092ad8b9c",
+                "reference": "717554494d786ae1a65989764627f6b092ad8b9c",
                 "shasum": ""
             },
             "require": {
@@ -1018,7 +1018,7 @@
             "support": {
                 "source": "https://github.com/roy-bongers/phpdns/tree/master"
             },
-            "time": "2022-04-06T20:11:52+00:00"
+            "time": "2022-04-06T20:33:28+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
