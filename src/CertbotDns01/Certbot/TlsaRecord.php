@@ -6,7 +6,7 @@ use Stayallive\TLSA\Builder;
 
 class TlsaRecord
 {
-    /** @var Builder $tlsaBuilder */
+    /** @var Builder */
     private $tlsaBuilder;
 
     public function __construct(

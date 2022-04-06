@@ -15,7 +15,7 @@ automatically.
 ## Requirements
 Version 2.5 has the following requirements. If you use an older PHP version you have to use an older release.
 Upgrading from v1? See the [upgrade guide](#upgrade-guide).
-* PHP >= 7.3.0 with JSON and OpenSSL extensions enabled
+* PHP >= 7.4 with JSON and OpenSSL extensions enabled
 * The [composer][7] package manager
 
 ## Installation
@@ -79,7 +79,7 @@ renew
 ```
 
 ## Supported platforms
-The code is tested on a Debian based Linux distribution (Ubuntu LTS) and currently supported PHP versions (>= 7.3).
+The code is tested on a Debian based Linux distribution (Ubuntu LTS) and currently supported PHP versions (>= 7.4).
 It probably works fine on other systems and versions of PHP but no guarantees are made.
 
 ## Upgrade guide

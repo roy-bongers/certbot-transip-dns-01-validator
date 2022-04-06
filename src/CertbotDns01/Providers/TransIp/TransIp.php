@@ -7,24 +7,16 @@ use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Certbot\TlsaRecord;
 use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
-use Stayallive\TLSA\Builder;
 use Transip\Api\Library\Entity\Domain\DnsEntry;
 use Transip\Api\Library\Entity\Domain\Nameserver;
 use Transip\Api\Library\TransipAPI;
 
 class TransIp implements ProviderInterface
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var Config */
-    private $config;
-
-    /** @var TransipAPI */
-    private $client;
-
-    /** @var array */
-    private $domainNames = [];
+    private LoggerInterface $logger;
+    private Config $config;
+    private ?TransipAPI $client = null;
+    private array $domainNames = [];
 
     public function __construct(Config $config, LoggerInterface $logger)
     {
@@ -60,11 +52,13 @@ class TransIp implements ProviderInterface
             if ($dnsEntry->getName() === $challengeRecord->getRecordName() &&
                 $dnsEntry->getContent() === $challengeRecord->getValidation()
             ) {
-                $this->logger->debug(sprintf(
-                    'Removing challenge DNS record(%s 60 TXT %s)',
-                    $dnsEntry->getName(),
-                    $dnsEntry->getContent()
-                ));
+                $this->logger->debug(
+                    sprintf(
+                        'Removing challenge DNS record(%s 60 TXT %s)',
+                        $dnsEntry->getName(),
+                        $dnsEntry->getContent()
+                    )
+                );
                 $client->domainDns()->removeDnsEntry($challengeRecord->getDomain(), $dnsEntry);
             }
         }
@@ -104,9 +98,9 @@ class TransIp implements ProviderInterface
         $ttl = 300
     ) {
         $dnsEntry = new DnsEntry([
-            'name'    => $tlsaRecord->getName(),
+            'name' => $tlsaRecord->getName(),
             'expires' => $ttl,
-            'type'    => DnsEntry::TYPE_TLSA,
+            'type' => DnsEntry::TYPE_TLSA,
             'content' => $tlsaRecord->getContent(),
         ]);
 
@@ -121,9 +115,9 @@ class TransIp implements ProviderInterface
             /** @var DnsEntry $existingDnsEntry */
             if (
                 $existingDnsEntry->getType() === $dnsEntry->getType() &&
-                $existingDnsEntry->getName() === $dnsEntry->getName())
-            {
+                $existingDnsEntry->getName() === $dnsEntry->getName()) {
                 $this->getTransIpApiClient()->domainDns()->updateEntry($domainName, $dnsEntry);
+
                 return;
             }
         }
