@@ -6,24 +6,24 @@ use Stayallive\TLSA\Builder;
 
 class TlsaRecord
 {
-    /** @var Builder */
-    private $tlsaBuilder;
+    private Builder $tlsaBuilder;
 
     public function __construct(
-        int $port,
+        string $url,
         string $protocol,
-        string $domain,
-        int $usage,
-        int $selector,
-        int $matchingType
+        string $pemCertificate,
+        string $pemPublicKey,
+        int $usage = Builder::CERTIFICATE_USAGE_DOMAIN_ISSUED_CERTIFICATE,
+        int $selector = Builder::SELECTOR_PUBLIC_KEY,
+        int $matchingType = Builder::MATCHING_TYPE_SHA256,
     ) {
-        $tlsaBuilder = new Builder($domain, $port, $protocol); // Builder for the alexbouma.me domain, port 25 and the UDP protocol
+        $tlsaBuilder = new Builder($url, $protocol); // Builder for the alexbouma.me domain, port 25 and the UDP protocol
 
-        $tlsaBuilder->forCertificate($pemEncodedCertificate);
-        $tlsaBuilder->forPublicKey($pemEncodedPublicKey);
-        $tlsaBuilder->certificateUsage(Builder::CERTIFICATE_USAGE_DOMAIN_ISSUED_CERTIFICATE); // Set the certificate usage to `3` (default)
-        $tlsaBuilder->selector(Builder::SELECTOR_PUBLIC_KEY); // Set the selector to `1` (default)
-        $tlsaBuilder->matchingType(Builder::MATCHING_TYPE_SHA256); // Set the matching type to `1` (default)
+        $tlsaBuilder->forCertificate($pemCertificate);
+        $tlsaBuilder->forPublicKey($pemPublicKey);
+        $tlsaBuilder->certificateUsage($usage); // Set the certificate usage to `3` (default)
+        $tlsaBuilder->selector($selector); // Set the selector to `1` (default)
+        $tlsaBuilder->matchingType($matchingType); // Set the matching type to `1` (default)
 
         $this->tlsaBuilder = $tlsaBuilder;
     }

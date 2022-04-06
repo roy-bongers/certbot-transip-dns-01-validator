@@ -5,8 +5,10 @@ namespace RoyBongers\CertbotDns01\Certbot;
 use Psr\Log\LoggerInterface;
 use PurplePixie\PhpDns\DNSQuery;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
+use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 use RuntimeException;
+use Spatie\Url\Url;
 
 class Dns01ManualHookHandler
 {
@@ -16,17 +18,20 @@ class Dns01ManualHookHandler
     /** @var int maximum number of times the nameservers will be queried before throwing an exception */
     private int $maxTries;
 
+    private Config $config;
     private ProviderInterface $provider;
     protected LoggerInterface $logger;
 
     public function __construct(
         ProviderInterface $provider,
         LoggerInterface $logger,
+        Config $config,
         int $sleep = 30,
         int $maxTries = 15
     ) {
         $this->provider = $provider;
         $this->logger = $logger;
+        $this->config = $config;
         $this->sleep = $sleep;
         $this->maxTries = $maxTries;
     }
@@ -66,22 +71,34 @@ class Dns01ManualHookHandler
         );
 
         $this->provider->cleanChallengeDnsRecord($challengeRecord);
+
+        if (0 === $request->remainingChallenges()) {
+            $this->addTLSARecords($request);
+        }
     }
 
-    private function AddTLSARecords(ManualHookRequest $request): void
+    private function addTLSARecords(ManualHookRequest $request): void
     {
-        $domain = $this->getBaseDomain($request->getDomain());
-        foreach ($tlsaConfig as $tlsa) {
-            if (fnmatch($domain, $tlsa['domain'])) {
+        $domains = $request->allDomains();
+        foreach ($this->config->get('tlsa', []) as $tlsaConfig) {
+            $url = Url::fromString($tlsaConfig['url']);
+            foreach ($domains as $domain) {
+                if (false === fnmatch($domain, $url->getHost())) {
+                    continue;
+                }
+
+
+
                 $tlsaRecord = new TlsaRecord(
-                    $tlsa['port'],
-                    $tlsa['protocol'],
-                    $tlsa['domain'],
-                    $tlsa['usage'],
-                    $tlsa['selector'],
-                    $tlsa['matching-type'],
+                    $tlsaConfig['url'],
+                    $tlsaConfig['protocol'],
+                    $certificate,
+                    $publicKey,
+                    $tlsaConfig['usage'],
+                    $tlsaConfig['selector'],
+                    $tlsaConfig['matching-type'],
                 );
-                $this->provider->addTlsaRecord($request->getDomain(), $tlsaRecord, $tlsa['ttl']);
+                $this->provider->addTlsaRecord($request->getDomain(), $tlsaRecord, $tlsaConfig['ttl']);
             }
         }
     }

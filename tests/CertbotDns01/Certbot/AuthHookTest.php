@@ -13,6 +13,7 @@ use PurplePixie\PhpDns\DNSTypes;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
+use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 use RuntimeException;
 use Symfony\Bridge\PhpUnit\DnsMock;
@@ -135,16 +136,19 @@ class AuthHookTest extends TestCase
         ];
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->provider = Mockery::mock(ProviderInterface::class);
         $this->provider->shouldReceive('getDomainNames')->andReturn(['domain.com', 'transip.nl']);
 
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('get')->andReturn([]);
+
         $this->dnsQuery = Mockery::mock('overload:' . DNSQuery::class);
 
-        $this->acme2 = new Dns01ManualHookHandler($this->provider, new NullLogger(), 0, 3);
+        $this->acme2 = new Dns01ManualHookHandler($this->provider, new NullLogger(), $config, 0, 3);
 
         DnsMock::register(Dns01ManualHookHandler::class);
         DnsMock::withMockedHosts(
@@ -167,7 +171,7 @@ class AuthHookTest extends TestCase
         );
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Mockery::close();

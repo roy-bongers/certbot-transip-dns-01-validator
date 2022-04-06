@@ -125,7 +125,7 @@ class TransIp implements ProviderInterface
         $this->getTransIpApiClient()->domainDns()->addDnsEntryToDomain($domainName, $dnsEntry);
     }
 
-    private function getTransIpApiClient(): TransipAPI
+    public function getTransIpApiClient(): TransipAPI
     {
         if ($this->client instanceof TransipAPI) {
             return $this->client;
