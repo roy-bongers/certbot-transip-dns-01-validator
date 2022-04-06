@@ -9,6 +9,7 @@ use Psr\Log\NullLogger;
 use PurplePixie\PhpDns\DNSAnswer;
 use PurplePixie\PhpDns\DNSQuery;
 use PurplePixie\PhpDns\DNSResult;
+use PurplePixie\PhpDns\DNSTypes;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
@@ -18,14 +19,9 @@ use Symfony\Bridge\PhpUnit\DnsMock;
 
 class AuthHookTest extends TestCase
 {
-    /** @var Dns01ManualHookHandler */
-    private $acme2;
-
-    /** @var ProviderInterface */
-    private $provider;
-
-    /** @var DNSQuery */
-    private $dnsQuery;
+    private Dns01ManualHookHandler $acme2;
+    private ProviderInterface $provider;
+    private DNSQuery $dnsQuery;
 
     public function testAuthHookWithPrimaryDomain(): void
     {
@@ -116,7 +112,7 @@ class AuthHookTest extends TestCase
     {
         $dnsResult = new DNSResult(
             'TXT',
-            '',
+            (new DNSTypes())->getByName('TXT'),
             '',
             60,
             $data,

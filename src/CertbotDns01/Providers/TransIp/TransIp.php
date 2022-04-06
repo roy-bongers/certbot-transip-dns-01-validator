@@ -12,17 +12,10 @@ use Transip\Api\Library\TransipAPI;
 
 class TransIp implements ProviderInterface
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var Config */
-    private $config;
-
-    /** @var TransipAPI */
-    private $client;
-
-    /** @var array */
-    private $domainNames = [];
+    private LoggerInterface $logger;
+    private Config $config;
+    private ?TransipAPI $client = null;
+    private array $domainNames = [];
 
     public function __construct(Config $config, LoggerInterface $logger)
     {
@@ -106,16 +99,13 @@ class TransIp implements ProviderInterface
         $privateKey = $this->config->get('transip_private_key', $this->config->get('private_key'));
         $generateWhitelistOnlyTokens = (bool) $this->config->get('transip_whitelist_only_token', true);
 
-        $httpClient = new HttpClient(TransipAPI::TRANSIP_API_ENDPOINT);
-
         $this->client = new TransipAPI(
             $login,
             $privateKey,
             $generateWhitelistOnlyTokens,
             '',
             '',
-            null,
-            $httpClient
+            null
         );
 
         return $this->client;
