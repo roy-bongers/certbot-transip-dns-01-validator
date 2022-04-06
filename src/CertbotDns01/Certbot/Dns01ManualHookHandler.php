@@ -2,7 +2,6 @@
 
 namespace RoyBongers\CertbotDns01\Certbot;
 
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use PurplePixie\PhpDns\DNSQuery;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
