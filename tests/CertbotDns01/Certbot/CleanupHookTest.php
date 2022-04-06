@@ -13,11 +13,8 @@ use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 
 class CleanupHookTest extends TestCase
 {
-    /** @var Dns01ManualHookHandler */
-    private $hookHandler;
-
-    /** @var ProviderInterface */
-    private $provider;
+    private Dns01ManualHookHandler $hookHandler;
+    private ProviderInterface $provider;
 
     public function testCleanupHookWithPrimaryDomain(): void
     {

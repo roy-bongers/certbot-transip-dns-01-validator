@@ -12,16 +12,13 @@ use RuntimeException;
 class Dns01ManualHookHandler
 {
     /** @var int number of seconds to sleep between nameserver polling rounds */
-    private $sleep;
+    private int $sleep;
 
     /** @var int maximum number of times the nameservers will be queried before throwing an exception */
-    private $maxTries;
+    private int $maxTries;
 
-    /** @var ProviderInterface */
-    private $provider;
-
-    /** @var Logger */
-    protected $logger;
+    private ProviderInterface $provider;
+    protected LoggerInterface $logger;
 
     public function __construct(
         ProviderInterface $provider,
