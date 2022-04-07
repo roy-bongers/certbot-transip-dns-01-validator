@@ -97,8 +97,10 @@ class TransIp implements ProviderInterface
         TlsaRecord $tlsaRecord,
         int $ttl = 300
     ) {
+        $name = rtrim(substr($tlsaRecord->getFullName(), 0, strrpos($tlsaRecord->getFullName(), $domainName)), '.');
+
         $dnsEntry = new DnsEntry([
-            'name' => $tlsaRecord->getName(),
+            'name' => $name,
             'expire' => $ttl,
             'type' => DnsEntry::TYPE_TLSA,
             'content' => $tlsaRecord->getContent(),
