@@ -16,12 +16,12 @@ class TlsaRecord
         int $selector = Builder::SELECTOR_PUBLIC_KEY,
         int $matchingType = Builder::MATCHING_TYPE_SHA256
     ) {
-        $tlsaBuilder = new Builder($url, $protocol); // Builder for the alexbouma.me domain, port 25 and the UDP protocol
+        $tlsaBuilder = new Builder($url, $protocol);
 
         $tlsaBuilder->forCertificate($pemCertificate);
-        $tlsaBuilder->certificateUsage($usage); // Set the certificate usage to `3` (default)
-        $tlsaBuilder->selector($selector); // Set the selector to `1` (default)
-        $tlsaBuilder->matchingType($matchingType); // Set the matching type to `1` (default)
+        $tlsaBuilder->certificateUsage($usage);
+        $tlsaBuilder->selector($selector);
+        $tlsaBuilder->matchingType($matchingType);
 
         $this->tlsaBuilder = $tlsaBuilder;
     }
