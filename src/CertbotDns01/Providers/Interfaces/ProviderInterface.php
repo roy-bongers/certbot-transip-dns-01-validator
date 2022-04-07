@@ -27,5 +27,5 @@ interface ProviderInterface
      */
     public function getNameservers(string $domainName): array;
 
-    public function addTlsaRecord(string $domainName, TlsaRecord $tlsaRecord, int $ttl = 300);
+    public function addTlsaRecord(string $domainName, TlsaRecord $tlsaRecord);
 }

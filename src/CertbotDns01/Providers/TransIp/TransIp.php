@@ -95,11 +95,11 @@ class TransIp implements ProviderInterface
     public function addTlsaRecord(
         string $domainName,
         TlsaRecord $tlsaRecord,
-        $ttl = 300
+        int $ttl = 300
     ) {
         $dnsEntry = new DnsEntry([
             'name' => $tlsaRecord->getName(),
-            'expires' => $ttl,
+            'expire' => $ttl,
             'type' => DnsEntry::TYPE_TLSA,
             'content' => $tlsaRecord->getContent(),
         ]);

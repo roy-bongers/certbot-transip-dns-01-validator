@@ -73,32 +73,42 @@ class Dns01ManualHookHandler
         $this->provider->cleanChallengeDnsRecord($challengeRecord);
 
         if (0 === $request->remainingChallenges()) {
-            $this->addTLSARecords($request);
+            $this->addTLSARecords($request->allDomains(), $challengeRecord->getDomain());
         }
     }
 
-    private function addTLSARecords(ManualHookRequest $request): void
+    private function addTLSARecords(array $allDomains, string $domainName): void
     {
-        $domains = $request->allDomains();
         foreach ($this->config->get('tlsa', []) as $tlsaConfig) {
             $url = Url::fromString($tlsaConfig['url']);
-            foreach ($domains as $domain) {
+            foreach ($allDomains as $domain) {
                 if (false === fnmatch($domain, $url->getHost())) {
                     continue;
                 }
 
+                $handle = popen('certbot certificates', 'r');
+                $certificates = '';
+                while ($read = fread($handle, 2096)) {
+                    $certificates .= $read;
+                }
 
+                preg_match_all('/Certificate Name: (.*?)\n.*?Domains: (.*?)\n.*?Expiry Date: ([\d-]+ [\d:\+]+).*?Certificate Path: (.*?)\n.*?Private Key Path: (.*?)\n/ms', $certificates, $matches);
+                foreach (array_keys($matches[0]) as $index) {
+                    $certificateDomains = $matches[2][$index];
+                    $certificate = $matches[4][$index];
 
-                $tlsaRecord = new TlsaRecord(
-                    $tlsaConfig['url'],
-                    $tlsaConfig['protocol'],
-                    $certificate,
-                    $publicKey,
-                    $tlsaConfig['usage'],
-                    $tlsaConfig['selector'],
-                    $tlsaConfig['matching-type'],
-                );
-                $this->provider->addTlsaRecord($request->getDomain(), $tlsaRecord, $tlsaConfig['ttl']);
+                    if (implode(' ', $allDomains) === $certificateDomains) {
+                        $tlsaRecord = new TlsaRecord(
+                            $tlsaConfig['url'],
+                            $tlsaConfig['protocol'] ?? 'tcp',
+                            file_get_contents($certificate),
+                            $tlsaConfig['usage'],
+                            $tlsaConfig['selector'],
+                            $tlsaConfig['matching-type'],
+                        );
+                        $this->provider->addTlsaRecord($domainName, $tlsaRecord, $tlsaConfig['ttl'] ?? 300);
+                    }
+                }
             }
         }
     }

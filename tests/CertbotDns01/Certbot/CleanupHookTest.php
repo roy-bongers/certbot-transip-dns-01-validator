@@ -75,6 +75,7 @@ class CleanupHookTest extends TestCase
         $this->provider->shouldReceive('getDomainNames')->andReturn(['domain.com', 'transip.nl']);
 
         $config = Mockery::mock(Config::class);
+        $config->shouldReceive('get')->andReturn([]);
 
         $this->hookHandler = new Dns01ManualHookHandler($this->provider, new NullLogger(), $config);
     }
