@@ -19,6 +19,7 @@ return [
             'usage' => 3,
             'selector' => 1,
             'matching-type' => 1,
+            'ttl' => 300,
         ],
     ],
 ];
