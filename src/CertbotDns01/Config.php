@@ -21,6 +21,7 @@ class Config
      *
      * @param string $key     the config key to search for, should always be lowercase
      * @param null   $default optional default value in case the config is not found
+     *
      * @return mixed
      */
     public function get(string $key, $default = null)
