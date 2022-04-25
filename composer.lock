@@ -1621,16 +1621,16 @@
         },
         {
             "name": "transip/transip-api-php",
-            "version": "v6.18.0",
+            "version": "v6.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/transip/transip-api-php.git",
-                "reference": "45e6c15f8b40c8a5df1746a5fa328c3f8fb4a04e"
+                "reference": "9717d62ab5ee0b563789f4d556561aada98c7c92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/45e6c15f8b40c8a5df1746a5fa328c3f8fb4a04e",
-                "reference": "45e6c15f8b40c8a5df1746a5fa328c3f8fb4a04e",
+                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/9717d62ab5ee0b563789f4d556561aada98c7c92",
+                "reference": "9717d62ab5ee0b563789f4d556561aada98c7c92",
                 "shasum": ""
             },
             "require": {
@@ -1638,6 +1638,7 @@
                 "ext-openssl": "*",
                 "guzzlehttp/guzzle": "^6.3|^7.0",
                 "php": "^7.2.0|^8.0",
+                "psr/cache": "^1.0.1|^3.0",
                 "symfony/cache": "^3.4|^4.4|^5.0|^6.0"
             },
             "require-dev": {
@@ -1663,9 +1664,9 @@
             "description": "TransIP Rest API Library",
             "support": {
                 "issues": "https://github.com/transip/transip-api-php/issues",
-                "source": "https://github.com/transip/transip-api-php/tree/v6.18.0"
+                "source": "https://github.com/transip/transip-api-php/tree/v6.21.0"
             },
-            "time": "2022-04-19T09:23:53+00:00"
+            "time": "2022-04-22T13:25:09+00:00"
         }
     ],
     "packages-dev": [
