@@ -1431,12 +1431,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/roy-bongers/phpdns.git",
-                "reference": "717554494d786ae1a65989764627f6b092ad8b9c"
+                "reference": "049cf806bc3c5a8084b13441175e8ee41d8f43a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/roy-bongers/phpdns/zipball/717554494d786ae1a65989764627f6b092ad8b9c",
-                "reference": "717554494d786ae1a65989764627f6b092ad8b9c",
+                "url": "https://api.github.com/repos/roy-bongers/phpdns/zipball/049cf806bc3c5a8084b13441175e8ee41d8f43a2",
+                "reference": "049cf806bc3c5a8084b13441175e8ee41d8f43a2",
                 "shasum": ""
             },
             "require": {
@@ -1457,8 +1457,13 @@
                     "PurplePixie": "src/"
                 }
             },
+            "scripts": {
+                "test": [
+                    "./vendor/bin/phpunit"
+                ]
+            },
             "license": [
-                "GPLv3"
+                "GPL-3.0-only"
             ],
             "authors": [
                 {
@@ -1470,7 +1475,7 @@
             "support": {
                 "source": "https://github.com/roy-bongers/phpdns/tree/master"
             },
-            "time": "2022-04-06T20:33:28+00:00"
+            "time": "2022-09-06T15:54:26+00:00"
         },
         {
             "name": "ralouphie/getallheaders",

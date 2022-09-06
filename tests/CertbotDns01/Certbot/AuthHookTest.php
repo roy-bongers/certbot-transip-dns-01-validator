@@ -112,7 +112,7 @@ class AuthHookTest extends TestCase
     {
         $dnsResult = new DNSResult(
             'TXT',
-            (new DNSTypes())->getByName('TXT'),
+            (new DNSTypes())->getIdFromName('TXT'),
             '',
             60,
             $data,
