@@ -10,6 +10,7 @@ use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
+use RuntimeException;
 
 class CleanupHookTest extends TestCase
 {
@@ -61,7 +62,7 @@ class CleanupHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=example.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $this->hookHandler->cleanupHook(new ManualHookRequest());
     }

@@ -22,5 +22,6 @@ return (new Config())
             'increment_style'                   => ['style' => 'post'],
             'concat_space'                      => ['spacing' => 'one'],
             'single_line_throw'                 => false,
+            'global_namespace_import'           => ['import_classes' => true],
         ]
     )->setFinder($finder);
