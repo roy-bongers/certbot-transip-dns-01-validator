@@ -10,25 +10,16 @@ use RuntimeException;
 
 class Dns01ManualHookHandler
 {
-    /** @var int number of seconds to sleep between nameserver polling rounds */
-    private int $sleep;
-
-    /** @var int maximum number of times the nameservers will be queried before throwing an exception */
-    private int $maxTries;
-
-    private ProviderInterface $provider;
-    protected LoggerInterface $logger;
-
+    /**
+     * @param int $sleep    Number of seconds to sleep between nameserver polling rounds
+     * @param int $maxTries Maximum number of times the nameservers will be queried before throwing an exception
+     */
     public function __construct(
-        ProviderInterface $provider,
-        LoggerInterface $logger,
-        int $sleep = 30,
-        int $maxTries = 15
+        private ProviderInterface $provider,
+        protected LoggerInterface $logger,
+        private int $sleep = 30,
+        private int $maxTries = 15
     ) {
-        $this->provider = $provider;
-        $this->logger = $logger;
-        $this->sleep = $sleep;
-        $this->maxTries = $maxTries;
     }
 
     /**
@@ -80,17 +71,15 @@ class Dns01ManualHookHandler
     /**
      * Search for the primary domain (zone) where the DNS records are stored. It loops through a list of options
      * starting with the full domain including subdomains. If that domain can't be managed by the provider a
-     * subdomain part is stripped of and we search again.
+     * subdomain part is stripped off, and we search again.
      */
     private function getBaseDomain(string $domain): string
     {
         $domainGuesses = $this->getDomainGuesses($domain);
 
         foreach ($this->provider->getDomainNames() as $domainName) {
-            foreach ($domainGuesses as $guess) {
-                if ($domainName === $guess) {
-                    return $domainName;
-                }
+            if (in_array($domainName, $domainGuesses, true)) {
+                return $domainName;
             }
         }
 
@@ -103,7 +92,7 @@ class Dns01ManualHookHandler
     private function getDomainGuesses(string $fullyQualifiedDomainName): array
     {
         $guesses = [];
-        while (false !== strpos($fullyQualifiedDomainName, '.')) {
+        while (str_contains($fullyQualifiedDomainName, '.')) {
             $guesses[] = $fullyQualifiedDomainName;
             $fullyQualifiedDomainName = substr($fullyQualifiedDomainName, strpos($fullyQualifiedDomainName, '.') + 1);
         }
@@ -132,7 +121,7 @@ class Dns01ManualHookHandler
             $updatedRecords = 0;
 
             // query each nameserver and make sure the TXT record exists.
-            foreach ($nameservers as $index => $nameserver) {
+            foreach ($nameservers as $nameserver) {
                 if ($this->nameserverIsUpdated($nameserver, $dnsRecord, $challengeRecord->getValidation())) {
                     $this->logger->debug(sprintf("Nameserver '%s' is up-to-date", $nameserver));
                     $updatedRecords++;

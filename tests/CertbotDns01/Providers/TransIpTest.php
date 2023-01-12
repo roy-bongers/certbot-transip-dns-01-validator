@@ -20,14 +20,9 @@ class TransIpTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /** @var TransIp */
-    private $transIp;
-
-    /** @var DnsRepository */
-    private $dnsService;
-
-    /** @var DomainRepository */
-    private $domainService;
+    private TransIp $transIp;
+    private DnsRepository $dnsService;
+    private DomainRepository $domainService;
 
     public function testItCreatesChallengeDnsRecord(): void
     {

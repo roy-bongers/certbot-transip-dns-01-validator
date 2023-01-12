@@ -6,8 +6,13 @@ define('APP_ROOT', __DIR__);
 require_once APP_ROOT . '/vendor/autoload.php';
 require_once APP_ROOT . '/src/app.php';
 
+use DI\Container;
+use Psr\Log\LoggerInterface;
 use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
+
+/* @var Container $container */
+/* @var LoggerInterface $logger */
 
 try {
     $hookHandler = $container->get(Dns01ManualHookHandler::class);
