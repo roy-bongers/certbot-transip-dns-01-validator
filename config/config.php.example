@@ -11,15 +11,4 @@ return [
 
     'logfile'     => 'logs/certbot-transip.log',
     'loglevel'    => 'info', // options: debug, info, error
-
-    'tlsa' => [
-        [
-            'url' => 'https://example.com:443',
-            'protocol' => 'tcp',
-            'usage' => 3,
-            'selector' => 1,
-            'matching-type' => 1,
-            'ttl' => 300,
-        ],
-    ],
 ];

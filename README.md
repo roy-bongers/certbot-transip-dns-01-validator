@@ -85,9 +85,9 @@ It probably works fine on other systems and versions of PHP but no guarantees ar
 ## Upgrade guide
 Version 2.0 is a complete rewrite of the code base and breaks with the original version. Follow these steps to upgrade:
  1. Checkout the latest master branch
- 1. Follow the [installation guide](#installation)
- 1. Remove the `Transip` folder after copying your login and private key to `config/config.php`
- 1. You are ready to go!
+ 2. Follow the [installation guide](#installation)
+ 3. Remove the `Transip` folder after copying your login and private key to `config/config.php`
+ 4. You are ready to go!
  
 ## Contributors
 When creating an issue please include a detailed description of what you are trying to execute and any output you

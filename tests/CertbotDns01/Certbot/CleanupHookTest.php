@@ -9,7 +9,6 @@ use Psr\Log\NullLogger;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
-use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 use RuntimeException;
 
@@ -68,20 +67,17 @@ class CleanupHookTest extends TestCase
         $this->hookHandler->cleanupHook(new ManualHookRequest());
     }
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->provider = Mockery::mock(ProviderInterface::class);
         $this->provider->shouldReceive('getDomainNames')->andReturn(['domain.com', 'transip.nl']);
 
-        $config = Mockery::mock(Config::class);
-        $config->shouldReceive('get')->andReturn([]);
-
-        $this->hookHandler = new Dns01ManualHookHandler($this->provider, new NullLogger(), $config);
+        $this->hookHandler = new Dns01ManualHookHandler($this->provider, new NullLogger());
     }
 
-    protected function tearDown(): void
+    public function tearDown(): void
     {
         parent::tearDown();
         Mockery::close();
