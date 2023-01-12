@@ -4,7 +4,7 @@ namespace RoyBongers\CertbotDns01;
 
 class Config
 {
-    private $config = [];
+    private array $config = [];
 
     public function __construct()
     {

@@ -12,15 +12,11 @@ use Transip\Api\Library\TransipAPI;
 
 class TransIp implements ProviderInterface
 {
-    private LoggerInterface $logger;
-    private Config $config;
     private ?TransipAPI $client = null;
     private array $domainNames = [];
 
-    public function __construct(Config $config, LoggerInterface $logger)
+    public function __construct(private Config $config, private LoggerInterface $logger)
     {
-        $this->config = $config;
-        $this->logger = $logger;
     }
 
     /**
