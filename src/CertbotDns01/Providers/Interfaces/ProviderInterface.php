@@ -3,6 +3,7 @@
 namespace RoyBongers\CertbotDns01\Providers\Interfaces;
 
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
+use RoyBongers\CertbotDns01\Certbot\TlsaRecord;
 
 interface ProviderInterface
 {
@@ -25,4 +26,6 @@ interface ProviderInterface
      * Return all nameservers for a given domain.
      */
     public function getNameservers(string $domainName): array;
+
+    public function addTlsaRecord(string $domainName, TlsaRecord $tlsaRecord);
 }
