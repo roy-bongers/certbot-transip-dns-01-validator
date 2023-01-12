@@ -5,10 +5,8 @@ namespace RoyBongers\CertbotDns01\Certbot;
 use Psr\Log\LoggerInterface;
 use PurplePixie\PhpDns\DNSQuery;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
-use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
 use RuntimeException;
-use Spatie\Url\Url;
 
 class Dns01ManualHookHandler
 {
@@ -18,20 +16,17 @@ class Dns01ManualHookHandler
     /** @var int maximum number of times the nameservers will be queried before throwing an exception */
     private int $maxTries;
 
-    private Config $config;
     private ProviderInterface $provider;
     protected LoggerInterface $logger;
 
     public function __construct(
         ProviderInterface $provider,
         LoggerInterface $logger,
-        Config $config,
         int $sleep = 30,
         int $maxTries = 15
     ) {
         $this->provider = $provider;
         $this->logger = $logger;
-        $this->config = $config;
         $this->sleep = $sleep;
         $this->maxTries = $maxTries;
     }
@@ -43,13 +38,11 @@ class Dns01ManualHookHandler
     {
         $challengeRecord = $this->getChallengeRecord($request);
 
-        $this->logger->info(
-            sprintf(
-                "Creating TXT record for %s with challenge '%s'",
-                $challengeRecord->getRecordName(),
-                $challengeRecord->getValidation()
-            )
-        );
+        $this->logger->info(sprintf(
+            "Creating TXT record for %s with challenge '%s'",
+            $challengeRecord->getRecordName(),
+            $challengeRecord->getValidation()
+        ));
 
         $this->provider->createChallengeDnsRecord($challengeRecord);
         $this->waitForNameServers($challengeRecord);
@@ -62,55 +55,13 @@ class Dns01ManualHookHandler
     {
         $challengeRecord = $this->getChallengeRecord($request);
 
-        $this->logger->info(
-            sprintf(
-                "Cleaning up record %s with value '%s'",
-                $challengeRecord->getRecordName(),
-                $challengeRecord->getValidation()
-            )
-        );
+        $this->logger->info(sprintf(
+            "Cleaning up record %s with value '%s'",
+            $challengeRecord->getRecordName(),
+            $challengeRecord->getValidation()
+        ));
 
         $this->provider->cleanChallengeDnsRecord($challengeRecord);
-
-        if (0 === $request->remainingChallenges()) {
-            $this->addTLSARecords($request->allDomains(), $challengeRecord->getDomain());
-        }
-    }
-
-    private function addTLSARecords(array $allDomains, string $domainName): void
-    {
-        foreach ($this->config->get('tlsa', []) as $tlsaConfig) {
-            $url = Url::fromString($tlsaConfig['url']);
-            foreach ($allDomains as $domain) {
-                if (false === fnmatch($domain, $url->getHost())) {
-                    continue;
-                }
-
-                $handle = popen('certbot certificates', 'r');
-                $certificates = '';
-                while ($read = fread($handle, 2096)) {
-                    $certificates .= $read;
-                }
-
-                preg_match_all('/Certificate Name: (.*?)\n.*?Domains: (.*?)\n.*?Expiry Date: ([\d-]+ [\d:\+]+).*?Certificate Path: (.*?)\n.*?Private Key Path: (.*?)\n/ms', $certificates, $matches);
-                foreach (array_keys($matches[0]) as $index) {
-                    $certificateDomains = $matches[2][$index];
-                    $certificate = $matches[4][$index];
-
-                    if (implode(' ', $allDomains) === $certificateDomains) {
-                        $tlsaRecord = new TlsaRecord(
-                            $tlsaConfig['url'],
-                            $tlsaConfig['protocol'] ?? 'tcp',
-                            file_get_contents($certificate),
-                            $tlsaConfig['usage'],
-                            $tlsaConfig['selector'],
-                            $tlsaConfig['matching-type'],
-                        );
-                        $this->provider->addTlsaRecord($domainName, $tlsaRecord, $tlsaConfig['ttl'] ?? 300);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -189,23 +140,19 @@ class Dns01ManualHookHandler
             }
 
             if ($updatedRecords < $totalNameservers) {
-                $this->logger->debug(
-                    sprintf(
-                        '%d of %d nameservers are ready. Retrying in %d seconds',
-                        $updatedRecords,
-                        $totalNameservers,
-                        $this->sleep
-                    )
-                );
+                $this->logger->debug(sprintf(
+                    '%d of %d nameservers are ready. Retrying in %d seconds',
+                    $updatedRecords,
+                    $totalNameservers,
+                    $this->sleep
+                ));
                 $tries++;
                 if ($tries > $this->maxTries) {
-                    throw new RuntimeException(
-                        sprintf(
-                            'Could not successfully query nameservers within %d tries (%d seconds)',
-                            $this->maxTries,
-                            $this->sleep * $this->maxTries
-                        )
-                    );
+                    throw new RuntimeException(sprintf(
+                        'Could not successfully query nameservers within %d tries (%d seconds)',
+                        $this->maxTries,
+                        $this->sleep * $this->maxTries
+                    ));
                 }
             } else {
                 $this->logger->info('All nameservers are updated!');

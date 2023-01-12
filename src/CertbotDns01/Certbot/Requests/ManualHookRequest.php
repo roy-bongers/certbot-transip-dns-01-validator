@@ -13,14 +13,4 @@ class ManualHookRequest
     {
         return getenv('CERTBOT_DOMAIN');
     }
-
-    public function remainingChallenges(): int
-    {
-        return getenv('CERTBOT_REMAINING_CHALLENGES');
-    }
-
-    public function allDomains(): array
-    {
-        return explode(',', getenv('CERTBOT_ALL_DOMAINS'));
-    }
 }
