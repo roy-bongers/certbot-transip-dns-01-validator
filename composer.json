@@ -31,7 +31,8 @@
         "monolog/monolog": "^2.0",
         "purplepixie/phpdns": "dev-master",
         "php-di/php-di": "^6.0",
-        "transip/transip-api-php": "^6.3"
+        "transip/transip-api-php": "^6.3",
+        "stayallive/tlsa": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",

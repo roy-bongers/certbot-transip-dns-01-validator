@@ -9,7 +9,9 @@ use Psr\Log\NullLogger;
 use RoyBongers\CertbotDns01\Certbot\ChallengeRecord;
 use RoyBongers\CertbotDns01\Certbot\Dns01ManualHookHandler;
 use RoyBongers\CertbotDns01\Certbot\Requests\ManualHookRequest;
+use RoyBongers\CertbotDns01\Config;
 use RoyBongers\CertbotDns01\Providers\Interfaces\ProviderInterface;
+use RuntimeException;
 
 class CleanupHookTest extends TestCase
 {
@@ -61,22 +63,25 @@ class CleanupHookTest extends TestCase
         putenv('CERTBOT_DOMAIN=example.com');
         putenv('CERTBOT_VALIDATION=AfricanOrEuropeanSwallow');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $this->hookHandler->cleanupHook(new ManualHookRequest());
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->provider = Mockery::mock(ProviderInterface::class);
         $this->provider->shouldReceive('getDomainNames')->andReturn(['domain.com', 'transip.nl']);
 
-        $this->hookHandler = new Dns01ManualHookHandler($this->provider, new NullLogger());
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('get')->andReturn([]);
+
+        $this->hookHandler = new Dns01ManualHookHandler($this->provider, new NullLogger(), $config);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Mockery::close();
