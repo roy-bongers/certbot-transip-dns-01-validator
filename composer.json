@@ -24,7 +24,7 @@
         "php": "^8.0",
         "monolog/monolog": "^2.0",
         "purplepixie/phpdns": "dev-master",
-        "php-di/php-di": "^6.0",
+        "php-di/php-di": "^7.0",
         "transip/transip-api-php": "^6.3"
     },
     "require-dev": {
