@@ -2,7 +2,6 @@
 
 namespace RoyBongers\Tests\CertbotDns01\Providers;
 
-use Hamcrest\Matchers;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
@@ -36,7 +35,7 @@ class TransIpTest extends TestCase
         );
 
         $this->dnsService->shouldReceive('addDnsEntryToDomain')
-            ->with('domain.com', Matchers::equalTo($expectedDnsEntry))
+            ->with('domain.com', Mockery::on(fn (DnsEntry $dnsEntry) => $dnsEntry == $expectedDnsEntry))
             ->once();
 
         $this->transIp->createChallengeDnsRecord(
@@ -69,7 +68,7 @@ class TransIpTest extends TestCase
 
         // assert the challenge record is being removed.
         $this->dnsService->shouldReceive('removeDnsEntry')
-            ->with('domain.com', Matchers::identicalTo($challengeDnsEntry))
+            ->with('domain.com', Mockery::on(fn (DnsEntry $dnsEntry) => $dnsEntry === $challengeDnsEntry))
             ->once();
 
         $this->transIp->cleanChallengeDnsRecord(

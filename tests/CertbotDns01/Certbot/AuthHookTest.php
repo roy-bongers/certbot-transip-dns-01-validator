@@ -2,7 +2,6 @@
 
 namespace RoyBongers\Tests\CertbotDns01\Certbot;
 
-use Hamcrest\Matchers;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -34,7 +33,7 @@ class AuthHookTest extends TestCase
             'AfricanOrEuropeanSwallow'
         );
         $this->provider->shouldReceive('createChallengeDnsRecord')
-            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->with(Mockery::on(fn (ChallengeRecord $challengeRecord) => $challengeRecord == $expectedChallengeRecord))
             ->once();
 
         $this->provider->shouldReceive('getNameservers')
@@ -62,7 +61,7 @@ class AuthHookTest extends TestCase
         );
 
         $this->provider->shouldReceive('createChallengeDnsRecord')
-            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->with(Mockery::on(fn ($challengeRecord) => $expectedChallengeRecord == $challengeRecord))
             ->once();
 
         $this->provider->shouldReceive('getNameservers')
