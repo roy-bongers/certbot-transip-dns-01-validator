@@ -15,13 +15,14 @@ $finder = Finder::create()
 return (new Config())
     ->setRules(
         [
-            '@Symfony'                          => true,
-            'array_syntax'                      => ['syntax' => 'short'],
-            'no_unused_imports'                 => true,
-            'trailing_comma_in_multiline'       => ['elements' => ['arrays']],
-            'increment_style'                   => ['style' => 'post'],
-            'concat_space'                      => ['spacing' => 'one'],
-            'single_line_throw'                 => false,
-            'global_namespace_import'           => ['import_classes' => true],
+            '@Symfony'                    => true,
+            'array_syntax'                => ['syntax' => 'short'],
+            'no_unused_imports'           => true,
+            'trailing_comma_in_multiline' => ['elements' => ['arrays']],
+            'increment_style'             => ['style' => 'post'],
+            'concat_space'                => ['spacing' => 'one'],
+            'single_line_throw'           => false,
+            'global_namespace_import'     => ['import_classes' => true],
+            'operator_linebreak'          => ['position' => 'end', 'only_booleans' => true],
         ]
     )->setFinder($finder);
