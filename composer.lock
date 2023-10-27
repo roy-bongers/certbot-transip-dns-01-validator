@@ -962,31 +962,26 @@
         },
         {
             "name": "php-http/promise",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/promise.git",
-                "reference": "4c4c1f9b7289a2ec57cde7f1e9762a5789506f88"
+                "reference": "ef4905bfb492ff389eb7f12e26925a0f20073050"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/promise/zipball/4c4c1f9b7289a2ec57cde7f1e9762a5789506f88",
-                "reference": "4c4c1f9b7289a2ec57cde7f1e9762a5789506f88",
+                "url": "https://api.github.com/repos/php-http/promise/zipball/ef4905bfb492ff389eb7f12e26925a0f20073050",
+                "reference": "ef4905bfb492ff389eb7f12e26925a0f20073050",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1 || ^8.0"
             },
             "require-dev": {
-                "friends-of-phpspec/phpspec-code-coverage": "^4.3.2",
-                "phpspec/phpspec": "^5.1.2 || ^6.2"
+                "friends-of-phpspec/phpspec-code-coverage": "^4.3.2 || ^6.3",
+                "phpspec/phpspec": "^5.1.2 || ^6.2 || ^7.4"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Http\\Promise\\": "src/"
@@ -1013,9 +1008,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-http/promise/issues",
-                "source": "https://github.com/php-http/promise/tree/1.1.0"
+                "source": "https://github.com/php-http/promise/tree/1.2.0"
             },
-            "time": "2020-07-07T09:29:14+00:00"
+            "time": "2023-10-24T09:20:26+00:00"
         },
         {
             "name": "psr/cache",
@@ -2049,16 +2044,16 @@
         },
         {
             "name": "transip/transip-api-php",
-            "version": "6.48.7",
+            "version": "6.48.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/transip/transip-api-php.git",
-                "reference": "54e1314bb1b575733ac4f62ef7aa4db13a7a769e"
+                "reference": "59290bb56db435a4cf525690f63f4a2f7175d967"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/54e1314bb1b575733ac4f62ef7aa4db13a7a769e",
-                "reference": "54e1314bb1b575733ac4f62ef7aa4db13a7a769e",
+                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/59290bb56db435a4cf525690f63f4a2f7175d967",
+                "reference": "59290bb56db435a4cf525690f63f4a2f7175d967",
                 "shasum": ""
             },
             "require": {
@@ -2102,9 +2097,9 @@
             "description": "TransIP Rest API Library",
             "support": {
                 "issues": "https://github.com/transip/transip-api-php/issues",
-                "source": "https://github.com/transip/transip-api-php/tree/6.48.7"
+                "source": "https://github.com/transip/transip-api-php/tree/6.48.9"
             },
-            "time": "2023-10-17T10:33:35+00:00"
+            "time": "2023-10-26T08:33:51+00:00"
         }
     ],
     "packages-dev": [
