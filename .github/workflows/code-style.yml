@@ -10,7 +10,7 @@ jobs:
     name: Code Syle
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: PHP-CS-Fixer
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
