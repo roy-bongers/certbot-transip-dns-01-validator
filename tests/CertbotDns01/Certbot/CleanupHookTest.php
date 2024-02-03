@@ -2,7 +2,6 @@
 
 namespace RoyBongers\Tests\CertbotDns01\Certbot;
 
-use Hamcrest\Matchers;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -29,7 +28,7 @@ class CleanupHookTest extends TestCase
         );
 
         $this->provider->shouldReceive('cleanChallengeDnsRecord')
-            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->with(Mockery::on(fn (ChallengeRecord $challengeRecord) => $challengeRecord == $expectedChallengeRecord))
             ->once();
 
         $this->expectNotToPerformAssertions();
@@ -49,7 +48,7 @@ class CleanupHookTest extends TestCase
         );
 
         $this->provider->shouldReceive('cleanChallengeDnsRecord')
-            ->with(Matchers::equalTo($expectedChallengeRecord))
+            ->with(Mockery::on(fn (ChallengeRecord $challengeRecord) => $challengeRecord == $expectedChallengeRecord))
             ->once();
 
         $this->expectNotToPerformAssertions();

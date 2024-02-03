@@ -19,7 +19,6 @@ $providers = [
 
 // build dependency injection container
 $builder = new ContainerBuilder();
-$builder->useAnnotations(false);
 $builder->addDefinitions(array_map('DI\get', $providers));
 $builder->addDefinitions(
     [
