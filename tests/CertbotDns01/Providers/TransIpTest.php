@@ -95,7 +95,7 @@ class TransIpTest extends TestCase
         $this->assertEquals($domainNames, $this->transIp->getDomainNames());
     }
 
-    private function generateDnsRecords(DnsEntry $additionalDnsEntry = null): array
+    private function generateDnsRecords(?DnsEntry $additionalDnsEntry = null): array
     {
         $dnsEntries = [
             [
