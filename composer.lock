@@ -691,16 +691,16 @@
         },
         {
             "name": "php-http/client-common",
-            "version": "2.7.2",
+            "version": "2.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/client-common.git",
-                "reference": "0cfe9858ab9d3b213041b947c881d5b19ceeca46"
+                "reference": "dcc6de29c90dd74faab55f71b79d89409c4bf0c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/client-common/zipball/0cfe9858ab9d3b213041b947c881d5b19ceeca46",
-                "reference": "0cfe9858ab9d3b213041b947c881d5b19ceeca46",
+                "url": "https://api.github.com/repos/php-http/client-common/zipball/dcc6de29c90dd74faab55f71b79d89409c4bf0c1",
+                "reference": "dcc6de29c90dd74faab55f71b79d89409c4bf0c1",
                 "shasum": ""
             },
             "require": {
@@ -710,15 +710,13 @@
                 "psr/http-client": "^1.0",
                 "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.0 || ^2.0",
-                "symfony/options-resolver": "~4.0.15 || ~4.1.9 || ^4.2.1 || ^5.0 || ^6.0 || ^7.0",
+                "symfony/options-resolver": "~4.0.15 || ~4.1.9 || ^4.2.1 || ^5.0 || ^6.0 || ^7.0 || ^8.0",
                 "symfony/polyfill-php80": "^1.17"
             },
             "require-dev": {
                 "doctrine/instantiator": "^1.1",
                 "guzzlehttp/psr7": "^1.4",
                 "nyholm/psr7": "^1.2",
-                "phpspec/phpspec": "^5.1 || ^6.3 || ^7.1",
-                "phpspec/prophecy": "^1.10.2",
                 "phpunit/phpunit": "^7.5.20 || ^8.5.33 || ^9.6.7"
             },
             "suggest": {
@@ -754,9 +752,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-http/client-common/issues",
-                "source": "https://github.com/php-http/client-common/tree/2.7.2"
+                "source": "https://github.com/php-http/client-common/tree/2.7.3"
             },
-            "time": "2024-09-24T06:21:48+00:00"
+            "time": "2025-11-29T19:12:34+00:00"
         },
         {
             "name": "php-http/discovery",
@@ -1988,16 +1986,16 @@
         },
         {
             "name": "transip/transip-api-php",
-            "version": "6.53.11",
+            "version": "6.53.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/transip/transip-api-php.git",
-                "reference": "7215dc502884a2c88159b87ac067228ec0645eda"
+                "reference": "a197bfaf25878274bdd32ffe54375c61ebff5dca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/7215dc502884a2c88159b87ac067228ec0645eda",
-                "reference": "7215dc502884a2c88159b87ac067228ec0645eda",
+                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/a197bfaf25878274bdd32ffe54375c61ebff5dca",
+                "reference": "a197bfaf25878274bdd32ffe54375c61ebff5dca",
                 "shasum": ""
             },
             "require": {
@@ -2041,9 +2039,9 @@
             "description": "TransIP Rest API Library",
             "support": {
                 "issues": "https://github.com/transip/transip-api-php/issues",
-                "source": "https://github.com/transip/transip-api-php/tree/6.53.11"
+                "source": "https://github.com/transip/transip-api-php/tree/6.53.12"
             },
-            "time": "2025-11-27T14:36:27+00:00"
+            "time": "2025-12-02T11:33:23+00:00"
         }
     ],
     "packages-dev": [
