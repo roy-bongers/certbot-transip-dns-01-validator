@@ -2,7 +2,7 @@
 
 namespace RoyBongers\CertbotDns01\Certbot;
 
-class ChallengeRecord
+readonly class ChallengeRecord
 {
     /**
      * ChallengeRecord constructor.
