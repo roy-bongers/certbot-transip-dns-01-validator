@@ -28,7 +28,7 @@ class CleanupHookTest extends TestCase
         );
 
         $this->provider->shouldReceive('cleanChallengeDnsRecord')
-            ->with(Mockery::on(fn (ChallengeRecord $challengeRecord) => $challengeRecord == $expectedChallengeRecord))
+            ->with(Mockery::on(static fn (ChallengeRecord $challengeRecord) => $challengeRecord == $expectedChallengeRecord))
             ->once();
 
         $this->expectNotToPerformAssertions();
@@ -48,7 +48,7 @@ class CleanupHookTest extends TestCase
         );
 
         $this->provider->shouldReceive('cleanChallengeDnsRecord')
-            ->with(Mockery::on(fn (ChallengeRecord $challengeRecord) => $challengeRecord == $expectedChallengeRecord))
+            ->with(Mockery::on(static fn (ChallengeRecord $challengeRecord) => $challengeRecord == $expectedChallengeRecord))
             ->once();
 
         $this->expectNotToPerformAssertions();

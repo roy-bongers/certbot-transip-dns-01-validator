@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-define('APP_ROOT', __DIR__);
+const APP_ROOT = __DIR__;
 require_once APP_ROOT . '/vendor/autoload.php';
 require_once APP_ROOT . '/src/app.php';
 

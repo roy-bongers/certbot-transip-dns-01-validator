@@ -15,8 +15,10 @@ class TransIp implements ProviderInterface
     private ?TransipAPI $client = null;
     private array $domainNames = [];
 
-    public function __construct(private Config $config, private LoggerInterface $logger)
-    {
+    public function __construct(
+        private readonly Config $config,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     /**
@@ -80,9 +82,7 @@ class TransIp implements ProviderInterface
             ->domainNameserver()
             ->getByDomainName($domainName);
 
-        return array_map(function (Nameserver $nameserver) {
-            return $nameserver->getHostname();
-        }, $nameservers);
+        return array_map(static fn (Nameserver $nameserver) => $nameserver->getHostname(), $nameservers);
     }
 
     public function getTransIpApiClient(): TransipAPI

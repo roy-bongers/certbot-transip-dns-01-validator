@@ -33,7 +33,7 @@ class AuthHookTest extends TestCase
             'AfricanOrEuropeanSwallow'
         );
         $this->provider->shouldReceive('createChallengeDnsRecord')
-            ->with(Mockery::on(fn (ChallengeRecord $challengeRecord) => $challengeRecord == $expectedChallengeRecord))
+            ->with(Mockery::on(static fn (ChallengeRecord $challengeRecord) => $challengeRecord == $expectedChallengeRecord))
             ->once();
 
         $this->provider->shouldReceive('getNameservers')
@@ -61,7 +61,7 @@ class AuthHookTest extends TestCase
         );
 
         $this->provider->shouldReceive('createChallengeDnsRecord')
-            ->with(Mockery::on(fn ($challengeRecord) => $expectedChallengeRecord == $challengeRecord))
+            ->with(Mockery::on(static fn ($challengeRecord) => $expectedChallengeRecord == $challengeRecord))
             ->once();
 
         $this->provider->shouldReceive('getNameservers')
