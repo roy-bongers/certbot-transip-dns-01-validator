@@ -35,7 +35,7 @@ class TransIpTest extends TestCase
         );
 
         $this->dnsService->shouldReceive('addDnsEntryToDomain')
-            ->with('domain.com', Mockery::on(fn (DnsEntry $dnsEntry) => $dnsEntry == $expectedDnsEntry))
+            ->with('domain.com', Mockery::on(static fn (DnsEntry $dnsEntry) => $dnsEntry == $expectedDnsEntry))
             ->once();
 
         $this->transIp->createChallengeDnsRecord(
@@ -68,7 +68,7 @@ class TransIpTest extends TestCase
 
         // assert the challenge record is being removed.
         $this->dnsService->shouldReceive('removeDnsEntry')
-            ->with('domain.com', Mockery::on(fn (DnsEntry $dnsEntry) => $dnsEntry === $challengeDnsEntry))
+            ->with('domain.com', Mockery::on(static fn (DnsEntry $dnsEntry) => $dnsEntry === $challengeDnsEntry))
             ->once();
 
         $this->transIp->cleanChallengeDnsRecord(
@@ -84,9 +84,7 @@ class TransIpTest extends TestCase
     {
         $domainNames = ['domain.com', 'example.nl'];
         $domainNameObjects = array_map(
-            function (string $domain) {
-                return new Domain(['name' => $domain]);
-            },
+            static fn (string $domain) => new Domain(['name' => $domain]),
             $domainNames
         );
 
@@ -142,12 +140,7 @@ class TransIpTest extends TestCase
             ],
         ];
 
-        $dnsEntries = array_map(
-            function ($dnsEntry) {
-                return new DnsEntry($dnsEntry);
-            },
-            $dnsEntries
-        );
+        $dnsEntries = array_map(static fn ($dnsEntry) => new DnsEntry($dnsEntry), $dnsEntries);
 
         if ($additionalDnsEntry instanceof DnsEntry) {
             $dnsEntries[] = $additionalDnsEntry;

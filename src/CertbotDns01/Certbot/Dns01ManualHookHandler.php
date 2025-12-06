@@ -15,10 +15,10 @@ class Dns01ManualHookHandler
      * @param int $maxTries Maximum number of times the nameservers will be queried before throwing an exception
      */
     public function __construct(
-        private ProviderInterface $provider,
+        private readonly ProviderInterface $provider,
         protected LoggerInterface $logger,
-        private int $sleep = 30,
-        private int $maxTries = 15
+        private readonly int $sleep = 30,
+        private readonly int $maxTries = 15
     ) {
     }
 
