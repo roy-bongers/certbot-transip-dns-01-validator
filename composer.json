@@ -25,7 +25,8 @@
         "monolog/monolog": "^3.5",
         "purplepixie/phpdns": "dev-master",
         "php-di/php-di": "^7.0",
-        "transip/transip-api-php": "^6.3"
+        "transip/transip-api-php": "^6.3",
+        "symfony/cache": "7.3.11"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
