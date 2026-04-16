@@ -1737,7 +1737,7 @@
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.34.0",
+            "version": "v1.36.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
@@ -1797,7 +1797,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.34.0"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.36.0"
             },
             "funding": [
                 {
@@ -1989,23 +1989,23 @@
         },
         {
             "name": "transip/transip-api-php",
-            "version": "6.54.5",
+            "version": "6.54.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/transip/transip-api-php.git",
-                "reference": "6730c8b26baf5d9db0d8b991b035d12c15ab2f4d"
+                "reference": "19d26ead474183cc5910ba1fe41c8ba3f206747d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/6730c8b26baf5d9db0d8b991b035d12c15ab2f4d",
-                "reference": "6730c8b26baf5d9db0d8b991b035d12c15ab2f4d",
+                "url": "https://api.github.com/repos/transip/transip-api-php/zipball/19d26ead474183cc5910ba1fe41c8ba3f206747d",
+                "reference": "19d26ead474183cc5910ba1fe41c8ba3f206747d",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-openssl": "*",
                 "guzzlehttp/guzzle": "^6.5 || ^7.4",
-                "php": "^7.2.0|^8.0",
+                "php": "^7.4 || ^8.0",
                 "php-http/client-common": "^2.5",
                 "php-http/discovery": "^1.14",
                 "psr/cache": "^1.0.1 || ^3.0"
@@ -2043,9 +2043,9 @@
             "description": "TransIP Rest API Library",
             "support": {
                 "issues": "https://github.com/transip/transip-api-php/issues",
-                "source": "https://github.com/transip/transip-api-php/tree/6.54.5"
+                "source": "https://github.com/transip/transip-api-php/tree/6.54.6"
             },
-            "time": "2026-04-07T14:23:39+00:00"
+            "time": "2026-04-15T09:39:03+00:00"
         }
     ],
     "packages-dev": [
@@ -6594,7 +6594,7 @@
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "v1.34.0",
+            "version": "v1.36.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
@@ -6655,7 +6655,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.34.0"
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.36.0"
             },
             "funding": [
                 {
@@ -6679,7 +6679,7 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.34.0",
+            "version": "v1.36.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
@@ -6740,7 +6740,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.34.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.36.0"
             },
             "funding": [
                 {
